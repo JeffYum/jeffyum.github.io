@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 5.4.2">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/StudentJeffRen.github.io/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/StudentJeffRen.github.io/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/StudentJeffRen.github.io/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/StudentJeffRen.github.io/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/StudentJeffRen.github.io/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.2/css/all.min.css" integrity="sha256-xejo6yLi6vGtAjcMIsY8BHdKsLg7QynVlFMzdQgUuy8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"jeffren.cn","root":"/StudentJeffRen.github.io/","images":"/StudentJeffRen.github.io/images","scheme":"Mist","darkmode":false,"version":"8.12.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/StudentJeffRen.github.io/js/config.js"></script>
+
+    <meta name="description" content="iOS 开发到此告一段落，那本书基本上算是学完了，只剩下一点偏向于辅助性的功能没有实现（99 美元&#x2F;年的开发者账号阻止了我继续学习）。More important，现在有了新的任务，一个月学会 Python。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python Note(1)">
+<meta property="og:url" content="https://jeffren.cn/2019/03/03/PythonNote1/index.html">
+<meta property="og:site_name" content="杰夫的博客">
+<meta property="og:description" content="iOS 开发到此告一段落，那本书基本上算是学完了，只剩下一点偏向于辅助性的功能没有实现（99 美元&#x2F;年的开发者账号阻止了我继续学习）。More important，现在有了新的任务，一个月学会 Python。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-03-02T16:00:00.000Z">
+<meta property="article:modified_time" content="2022-08-09T12:40:55.449Z">
+<meta property="article:author" content="Jeff Ren">
+<meta property="article:tag" content="Python">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://jeffren.cn/2019/03/03/PythonNote1/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://jeffren.cn/2019/03/03/PythonNote1/","path":"2019/03/03/PythonNote1/","title":"Python Note(1)"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Python Note(1) | 杰夫的博客</title>
+  
+
+  <script src="/StudentJeffRen.github.io/js/third-party/analytics/baidu-analytics.js"></script>
+  <script async src="https://hm.baidu.com/hm.js?f151b1a5a8070426a1f4b8f98750f614"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/StudentJeffRen.github.io/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/StudentJeffRen.github.io/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">杰夫的博客</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/StudentJeffRen.github.io/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/StudentJeffRen.github.io/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/StudentJeffRen.github.io/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/StudentJeffRen.github.io/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E4%BA%9B%E8%A7%84%E5%88%99"><span class="nav-number">1.</span> <span class="nav-text">一些规则</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%8F%82%E6%95%B0"><span class="nav-number">2.</span> <span class="nav-text">命令行参数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B5%8B%E5%80%BC"><span class="nav-number">3.</span> <span class="nav-text">赋值</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="nav-number">4.</span> <span class="nav-text">字符串</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#List"><span class="nav-number">5.</span> <span class="nav-text">List</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Tuple"><span class="nav-number">6.</span> <span class="nav-text">Tuple</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Dictionary"><span class="nav-number">7.</span> <span class="nav-text">Dictionary</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2"><span class="nav-number">8.</span> <span class="nav-text">类型转换</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Operator"><span class="nav-number">9.</span> <span class="nav-text">Operator</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%90%E7%AE%97"><span class="nav-number">9.1.</span> <span class="nav-text">运算</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AF%94%E8%BE%83"><span class="nav-number">9.2.</span> <span class="nav-text">比较</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B5%8B%E5%80%BC-1"><span class="nav-number">9.3.</span> <span class="nav-text">赋值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8C%89%E4%BD%8D-Bitwise"><span class="nav-number">9.4.</span> <span class="nav-text">按位 Bitwise</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%BB%E8%BE%91"><span class="nav-number">9.5.</span> <span class="nav-text">逻辑</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Membership"><span class="nav-number">9.6.</span> <span class="nav-text">Membership</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Identity"><span class="nav-number">9.7.</span> <span class="nav-text">Identity</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%98%E5%85%88%E7%BA%A7-Precedence"><span class="nav-number">9.8.</span> <span class="nav-text">优先级 Precedence</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9D%A1%E4%BB%B6"><span class="nav-number">10.</span> <span class="nav-text">条件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BE%AA%E7%8E%AF"><span class="nav-number">11.</span> <span class="nav-text">循环</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BE%AA%E7%8E%AF%E6%8E%A7%E5%88%B6%E8%AF%AD%E5%8F%A5"><span class="nav-number">11.1.</span> <span class="nav-text">循环控制语句</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Iterator-and-Generator"><span class="nav-number">11.2.</span> <span class="nav-text">Iterator and Generator</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Jeff Ren"
+      src="/StudentJeffRen.github.io/uploads/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Jeff Ren</p>
+  <div class="site-description" itemprop="description">谦虚谨慎，戒骄戒躁</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/StudentJeffRen.github.io/archives/">
+          <span class="site-state-item-count">38</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/StudentJeffRen.github.io/categories/">
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/StudentJeffRen.github.io/tags/">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/StudentJeffRen" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;StudentJeffRen" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://jeffren.cn/2019/03/03/PythonNote1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/StudentJeffRen.github.io/uploads/avatar.jpg">
+      <meta itemprop="name" content="Jeff Ren">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="杰夫的博客">
+      <meta itemprop="description" content="谦虚谨慎，戒骄戒躁">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Python Note(1) | 杰夫的博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Python Note(1)
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-03-03 00:00:00" itemprop="dateCreated datePublished" datetime="2019-03-03T00:00:00+08:00">2019-03-03</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-08-09 20:40:55" itemprop="dateModified" datetime="2022-08-09T20:40:55+08:00">2022-08-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/StudentJeffRen.github.io/categories/Python/" itemprop="url" rel="index"><span itemprop="name">Python</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/StudentJeffRen.github.io/2019/03/03/PythonNote1/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/03/03/PythonNote1/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <blockquote>
+<p>iOS 开发到此告一段落，那本书基本上算是学完了，只剩下一点偏向于辅助性的功能没有实现（99 美元&#x2F;年的开发者账号阻止了我继续学习）。More important，现在有了新的任务，一个月学会 Python。</p>
+</blockquote>
+<span id="more"></span>
+
+<h2 id="一些规则"><a href="#一些规则" class="headerlink" title="一些规则"></a>一些规则</h2><p>类名大写开头，其他全部小写</p>
+<p>_ 开头说明标识符是私有的</p>
+<p>__ 强私有</p>
+<p><code>__name__</code> 语言定义的特殊名称</p>
+<p>所有关键字都是小写的</p>
+<p>\ 表示内容在下一行继续</p>
+<p>“”” 允许字符串多行</p>
+<h2 id="命令行参数"><a href="#命令行参数" class="headerlink" title="命令行参数"></a>命令行参数</h2><p><code>sys</code> 库，<code>sys.argv</code> 获取命令行参数，可以用 len(), str() 方法来获取个数和字符串。注意第一个参数是脚本的名字</p>
+<h2 id="赋值"><a href="#赋值" class="headerlink" title="赋值"></a>赋值</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">a = b = c = <span class="number">1</span></span><br><span class="line">a, b, c = <span class="number">1</span>, <span class="number">2</span>, <span class="string">&quot;john&quot;</span> <span class="comment"># 有妙用，后面会提到</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="字符串"><a href="#字符串" class="headerlink" title="字符串"></a>字符串</h2><p>以下是几个有趣的操作</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">str</span> = <span class="string">&#x27;Hello World!&#x27;</span></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">str</span>[<span class="number">0</span>]) <span class="comment"># 第一个</span></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">str</span>[<span class="number">2</span>:<span class="number">5</span>]) <span class="comment"># 切片，str[2], str[3], str[4], 不包括 str[5]</span></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">str</span>[<span class="number">2</span>:])</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">str</span> * <span class="number">2</span>) <span class="comment"># 复读</span></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">str</span> + <span class="string">&quot;TEST&quot;</span>) <span class="comment"># 拼接</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="List"><a href="#List" class="headerlink" title="List"></a>List</h2><p>和字符串操作完全一致</p>
+<h2 id="Tuple"><a href="#Tuple" class="headerlink" title="Tuple"></a>Tuple</h2><p><strong>只读</strong>列表，用圆括号，不可更新。但访问还是用方括号 <code>tuple[0]</code></p>
+<h2 id="Dictionary"><a href="#Dictionary" class="headerlink" title="Dictionary"></a>Dictionary</h2><p>键值对，与列表和元组不同的是，index 可以是其他类型（如字符串），不局限于数字。用花括号，没有顺序。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">dict</span> = &#123;&#125;</span><br><span class="line">tinydict = &#123;<span class="string">&#x27;name&#x27;</span>: <span class="string">&#x27;john&#x27;</span>, <span class="string">&#x27;code&#x27;</span>: <span class="number">6734</span>, <span class="string">&#x27;dept&#x27;</span>: <span class="string">&#x27;sales&#x27;</span>&#125;</span><br><span class="line"><span class="built_in">dict</span>[<span class="string">&#x27;one&#x27;</span>] = <span class="string">&quot;This is one&quot;</span> <span class="comment"># 赋值，index 是字符串</span></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">dict</span>[<span class="string">&#x27;one&#x27;</span>])</span><br><span class="line"><span class="built_in">print</span>(tinydict) <span class="comment"># 完整的字典</span></span><br><span class="line"><span class="built_in">print</span>(tinydict.keys()) <span class="comment"># 所有键</span></span><br><span class="line"><span class="built_in">print</span>(tinydic.values()) <span class="comment"># 所有值</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="类型转换"><a href="#类型转换" class="headerlink" title="类型转换"></a>类型转换</h2><p>查表，通常方法名就是类型名，会返回一个新的对象。</p>
+<h2 id="Operator"><a href="#Operator" class="headerlink" title="Operator"></a>Operator</h2><h3 id="运算"><a href="#运算" class="headerlink" title="运算"></a>运算</h3><p><code>**</code> 指数</p>
+<p><code>//</code> 除完移除小数部分</p>
+<h3 id="比较"><a href="#比较" class="headerlink" title="比较"></a>比较</h3><p>没什么好说的</p>
+<h3 id="赋值-1"><a href="#赋值-1" class="headerlink" title="赋值"></a>赋值</h3><p>还是这些不太常见的操作符</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">c %= a <span class="comment"># c = c % a</span></span><br><span class="line">c **= a <span class="comment"># c = c**a</span></span><br><span class="line">c //= a <span class="comment"># c = c//a</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="按位-Bitwise"><a href="#按位-Bitwise" class="headerlink" title="按位 Bitwise"></a>按位 Bitwise</h3><p><code>bin()</code> 可以获取整数的二进制数</p>
+<p>与，或，非，异或，左移，右移</p>
+<h3 id="逻辑"><a href="#逻辑" class="headerlink" title="逻辑"></a>逻辑</h3><p><code>and</code>, <code>or</code>, <code>not</code></p>
+<h3 id="Membership"><a href="#Membership" class="headerlink" title="Membership"></a>Membership</h3><p><code>in</code>, <code>not in</code></p>
+<p>变量在列表里吗？</p>
+<h3 id="Identity"><a href="#Identity" class="headerlink" title="Identity"></a>Identity</h3><p><code>id()</code> 获取变量的内存地址</p>
+<p><code>a is b</code> 相当于 <code>id(a) == id(b)</code>, 即比较操作符两边的变量是否指向同一个对象</p>
+<p>此外还有 <code>is not</code></p>
+<h3 id="优先级-Precedence"><a href="#优先级-Precedence" class="headerlink" title="优先级 Precedence"></a>优先级 Precedence</h3><p>查表</p>
+<h2 id="条件"><a href="#条件" class="headerlink" title="条件"></a>条件</h2><p>注意格式，冒号，缩进。当仅有一行代码时，可以紧随判断之后，不换行。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> expression:</span><br><span class="line">    statement(s)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    statement(s)</span><br></pre></td></tr></table></figure>
+
+<h2 id="循环"><a href="#循环" class="headerlink" title="循环"></a>循环</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span> expression:</span><br><span class="line">	statement(s)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    statement(s)</span><br></pre></td></tr></table></figure>
+
+<p>无限循环可用于客户端&#x2F;服务器，与用户交互的场景。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">input</span>(<span class="string">&quot;Enter a number:&quot;</span>) <span class="comment"># 先打印，再接受输入</span></span><br></pre></td></tr></table></figure>
+
+<p>类似地，循环也支持 <code>else</code> 语句，当循环到条件为 <code>false</code> 时执行。</p>
+<p><code>for</code> 循环通常用于迭代，遍历列表或字符串</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> iterating_var <span class="keyword">in</span> sequence:</span><br><span class="line">    statements(s)</span><br></pre></td></tr></table></figure>
+
+<p>序列中的每个元素一一赋值给临时变量 <code>iterating_var</code>, 每次赋值后执行语句，全部遍历后结束循环</p>
+<p><code>range()</code> 生成数列</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">list</span>(<span class="built_in">range</span>(<span class="number">5</span>))</span><br><span class="line">[<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>]</span><br></pre></td></tr></table></figure>
+
+<h3 id="循环控制语句"><a href="#循环控制语句" class="headerlink" title="循环控制语句"></a>循环控制语句</h3><p><code>break</code> 跳出循环</p>
+<p><code>continue</code> 进入下一个循环</p>
+<p><code>pass</code> 什么都不干，满足语法</p>
+<h3 id="Iterator-and-Generator"><a href="#Iterator-and-Generator" class="headerlink" title="Iterator and Generator"></a>Iterator and Generator</h3><p>迭代器是一个对象，允许程序员遍历集合中的所有元素，不用管具体如何实现，有两个基本方法 <code>iter()</code>, <code>next()</code></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="built_in">list</span> = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>]</span><br><span class="line">it = <span class="built_in">iter</span>(<span class="built_in">list</span>) <span class="comment"># 创建一个迭代器</span></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">next</span>(it)) <span class="comment"># 迭代器中的下一个合法元素，由 next() 方法获得</span></span><br><span class="line"><span class="comment"># 可以结合 while 循环来遍历:</span></span><br><span class="line"><span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">    <span class="keyword">try</span>: <span class="built_in">print</span>(<span class="built_in">next</span>(it))</span><br><span class="line">    <span class="keyword">except</span> StopIteration: sys.exit()</span><br></pre></td></tr></table></figure>
+
+<p>使用了 <code>yield</code> 的函数被称为生成器，下面是一个斐波那契生成器的例子</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 生成器函数 斐波那契</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">fibonacci</span>(<span class="params">n</span>):</span><br><span class="line">    a, b, counter = <span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span></span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        <span class="keyword">if</span> (counter &gt; n):</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        <span class="keyword">yield</span> a <span class="comment"># 返回 a，下一次执行 next() 时从这里继续</span></span><br><span class="line">        a, b = b, a + b <span class="comment"># 同一行赋值，免掉了用 temp，奇妙</span></span><br><span class="line">        counter += <span class="number">1</span></span><br><span class="line">f = fibonacci(<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">    <span class="keyword">try</span>: <span class="built_in">print</span>(<span class="built_in">next</span>(it)) <span class="comment"># 在这里输出结果哦</span></span><br><span class="line">    <span class="keyword">except</span> StopIteration: sys.exit()</span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/StudentJeffRen.github.io/tags/Python/" rel="tag"># Python</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/StudentJeffRen.github.io/2019/02/28/%E3%80%90iOS%20old%E3%80%91Chap%2020%20Search%20Bar/" rel="prev" title="Search Bar">
+                  <i class="fa fa-chevron-left"></i> Search Bar
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/StudentJeffRen.github.io/2019/03/08/PythonNote2/" rel="next" title="Python Note(2)">
+                  Python Note(2) <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jeff Ren</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/StudentJeffRen.github.io/js/comments.js"></script><script src="/StudentJeffRen.github.io/js/utils.js"></script><script src="/StudentJeffRen.github.io/js/motion.js"></script><script src="/StudentJeffRen.github.io/js/schemes/muse.js"></script><script src="/StudentJeffRen.github.io/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"jeffren","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/StudentJeffRen.github.io/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

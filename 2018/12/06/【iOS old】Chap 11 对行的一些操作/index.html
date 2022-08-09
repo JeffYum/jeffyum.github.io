@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 5.4.2">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/StudentJeffRen.github.io/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/StudentJeffRen.github.io/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/StudentJeffRen.github.io/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/StudentJeffRen.github.io/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/StudentJeffRen.github.io/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.2/css/all.min.css" integrity="sha256-xejo6yLi6vGtAjcMIsY8BHdKsLg7QynVlFMzdQgUuy8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"jeffren.cn","root":"/StudentJeffRen.github.io/","images":"/StudentJeffRen.github.io/images","scheme":"Mist","darkmode":false,"version":"8.12.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/StudentJeffRen.github.io/js/config.js"></script>
+
+    <meta name="description" content="介绍 MVC 模式删除，分享，check in 通过滑动UIActivityViewController 实现分享页特性">
+<meta property="og:type" content="article">
+<meta property="og:title" content="对行的一些操作">
+<meta property="og:url" content="https://jeffren.cn/2018/12/06/%E3%80%90iOS%20old%E3%80%91Chap%2011%20%E5%AF%B9%E8%A1%8C%E7%9A%84%E4%B8%80%E4%BA%9B%E6%93%8D%E4%BD%9C/index.html">
+<meta property="og:site_name" content="杰夫的博客">
+<meta property="og:description" content="介绍 MVC 模式删除，分享，check in 通过滑动UIActivityViewController 实现分享页特性">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-12-05T16:00:00.000Z">
+<meta property="article:modified_time" content="2022-08-09T12:40:55.451Z">
+<meta property="article:author" content="Jeff Ren">
+<meta property="article:tag" content="iOS">
+<meta property="article:tag" content="Swift">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://jeffren.cn/2018/12/06/%E3%80%90iOS%20old%E3%80%91Chap%2011%20%E5%AF%B9%E8%A1%8C%E7%9A%84%E4%B8%80%E4%BA%9B%E6%93%8D%E4%BD%9C/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://jeffren.cn/2018/12/06/%E3%80%90iOS%20old%E3%80%91Chap%2011%20%E5%AF%B9%E8%A1%8C%E7%9A%84%E4%B8%80%E4%BA%9B%E6%93%8D%E4%BD%9C/","path":"2018/12/06/【iOS old】Chap 11 对行的一些操作/","title":"对行的一些操作"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>对行的一些操作 | 杰夫的博客</title>
+  
+
+  <script src="/StudentJeffRen.github.io/js/third-party/analytics/baidu-analytics.js"></script>
+  <script async src="https://hm.baidu.com/hm.js?f151b1a5a8070426a1f4b8f98750f614"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/StudentJeffRen.github.io/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/StudentJeffRen.github.io/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">杰夫的博客</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/StudentJeffRen.github.io/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/StudentJeffRen.github.io/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/StudentJeffRen.github.io/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/StudentJeffRen.github.io/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Model-View-Controller-MVC-%E6%A8%A1%E5%9E%8B-%E8%A7%86%E5%9B%BE-%E6%8E%A7%E5%88%B6%E5%99%A8"><span class="nav-number">1.</span> <span class="nav-text">Model-View-Controller(MVC) 模型-视图-控制器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E8%A1%8C"><span class="nav-number">2.</span> <span class="nav-text">删除行</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Enable-the-Swipe-to-delete-feature"><span class="nav-number">2.1.</span> <span class="nav-text">Enable the Swipe-to-delete feature</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Delete-Row-Data-from-the-Model"><span class="nav-number">2.2.</span> <span class="nav-text">Delete Row Data from the Model</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Delete-Row-Data-from-UITableView"><span class="nav-number">2.3.</span> <span class="nav-text">Delete Row Data from UITableView</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9B%B4%E5%A4%9A%E6%93%8D%E4%BD%9C-%E9%87%8D%E7%82%B9"><span class="nav-number">3.</span> <span class="nav-text">更多操作(重点)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%AA%E6%80%A7%E5%8C%96-UIContextualAction"><span class="nav-number">4.</span> <span class="nav-text">个性化 UIContextualAction</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Jeff Ren"
+      src="/StudentJeffRen.github.io/uploads/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Jeff Ren</p>
+  <div class="site-description" itemprop="description">谦虚谨慎，戒骄戒躁</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/StudentJeffRen.github.io/archives/">
+          <span class="site-state-item-count">38</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/StudentJeffRen.github.io/categories/">
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/StudentJeffRen.github.io/tags/">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/StudentJeffRen" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;StudentJeffRen" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://jeffren.cn/2018/12/06/%E3%80%90iOS%20old%E3%80%91Chap%2011%20%E5%AF%B9%E8%A1%8C%E7%9A%84%E4%B8%80%E4%BA%9B%E6%93%8D%E4%BD%9C/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/StudentJeffRen.github.io/uploads/avatar.jpg">
+      <meta itemprop="name" content="Jeff Ren">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="杰夫的博客">
+      <meta itemprop="description" content="谦虚谨慎，戒骄戒躁">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="对行的一些操作 | 杰夫的博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          对行的一些操作
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-12-06 00:00:00" itemprop="dateCreated datePublished" datetime="2018-12-06T00:00:00+08:00">2018-12-06</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-08-09 20:40:55" itemprop="dateModified" datetime="2022-08-09T20:40:55+08:00">2022-08-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/StudentJeffRen.github.io/categories/iOS/" itemprop="url" rel="index"><span itemprop="name">iOS</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/StudentJeffRen.github.io/2018/12/06/%E3%80%90iOS%20old%E3%80%91Chap%2011%20%E5%AF%B9%E8%A1%8C%E7%9A%84%E4%B8%80%E4%BA%9B%E6%93%8D%E4%BD%9C/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2018/12/06/【iOS old】Chap 11 对行的一些操作/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <blockquote>
+<p>介绍 MVC 模式<br>删除，分享，check in 通过滑动<br>UIActivityViewController 实现分享页特性</p>
+</blockquote>
+<span id="more"></span>
+
+<h2 id="Model-View-Controller-MVC-模型-视图-控制器"><a href="#Model-View-Controller-MVC-模型-视图-控制器" class="headerlink" title="Model-View-Controller(MVC) 模型-视图-控制器"></a>Model-View-Controller(MVC) 模型-视图-控制器</h2><blockquote>
+<p><strong>Separated Presentation</strong></p>
+<p>Domain object: 模型化对现实世界的认知</p>
+<p>（完全自包含，不设计 presentation，同时支持多个 presentations）</p>
+<p>Presentation object: 屏幕上的 GUI 元素</p>
+<p>允许应用在图形界面和命令行运行</p>
+</blockquote>
+<p><em><strong>Separation of Concerns(SoC)</strong></em></p>
+<p><em>Concerns:</em> 软件功能性的不同方面。将复杂的特征或程序分割为不同的区域，有各自的职责。（回顾之前提到过的<em>委托模式</em>）</p>
+<p>Model-View-Controller 也是一种 SoC。</p>
+<ul>
+<li><strong>Model:</strong> 负责保存数据和与数据相关的操作。例如，数组；添加，更新，删除。</li>
+<li><strong>View:</strong> 负责视觉显示。例如，UITableView 以列表形式显示数据。</li>
+<li><strong>Controller:</strong> model 和 view 之间的桥梁。转换来自 view 的用户交互(e.g. tap)，变成能在 model 中执行的动作。例如，用户点击了删除按钮，controller 触发 model 中的删除操作。完成后，model 请求 view 刷新来显示更新后的数据。</li>
+</ul>
+<h2 id="删除行"><a href="#删除行" class="headerlink" title="删除行"></a>删除行</h2><p>弄懂 MVC 模式后，要删除一行，可分为以下 3 步：</p>
+<ol>
+<li>view 中添加滑动删除，以便用户操作</li>
+<li>model 中删除相关数据</li>
+<li>重新加载 view</li>
+</ol>
+<h3 id="Enable-the-Swipe-to-delete-feature"><a href="#Enable-the-Swipe-to-delete-feature" class="headerlink" title="Enable the Swipe-to-delete feature"></a>Enable the Swipe-to-delete feature</h3><p><code>UITableVIewDataSource</code>协议中的方法(查看官方文档)，为特定行处理删除或插入</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">override</span> <span class="keyword">func</span> <span class="title function_">tableView</span>(<span class="keyword">_</span> <span class="params">tableView</span>: <span class="type">UITableView</span>, <span class="params">commit</span> <span class="params">editingStyle</span>: <span class="type">UITableViewCell</span>.<span class="type">EditingStyle</span>, <span class="params">forRowAt</span> <span class="params">indexPath</span>: <span class="type">IndexPath</span>) &#123;</span><br><span class="line">        </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Delete-Row-Data-from-the-Model"><a href="#Delete-Row-Data-from-the-Model" class="headerlink" title="Delete Row Data from the Model"></a>Delete Row Data from the Model</h3><p>实现上面的方法</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">override</span> <span class="keyword">func</span> <span class="title function_">tableView</span>(<span class="keyword">_</span> <span class="params">tableView</span>: <span class="type">UITableView</span>, <span class="params">commit</span> <span class="params">editingStyle</span>: <span class="type">UITableViewCell</span>.<span class="type">EditingStyle</span>, <span class="params">forRowAt</span> <span class="params">indexPath</span>: <span class="type">IndexPath</span>) &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> editingStyle <span class="operator">==</span> .delete &#123;</span><br><span class="line">        restaurantNames.remove(at: indexPath.row)</span><br><span class="line">        restaurantLocations.remove(at: indexPath.row)</span><br><span class="line">        restaurantTypes.remove(at: indexPath.row)</span><br><span class="line">        restaurantIsVisited.remove(at: indexPath.row)</span><br><span class="line">        restaurantImages.remove(at: indexPath.row)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Delete-Row-Data-from-UITableView"><a href="#Delete-Row-Data-from-UITableView" class="headerlink" title="Delete Row Data from UITableView"></a>Delete Row Data from UITableView</h3><p>与其重新载入 Model，不如直接删除相关行。在上述方法中添加：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tableView.deleteRows(at: [indexPath], with: .fade)</span><br></pre></td></tr></table></figure>
+
+<h2 id="更多操作-重点"><a href="#更多操作-重点" class="headerlink" title="更多操作(重点)"></a>更多操作(重点)</h2><p>如果我们只要删除功能，上面的代码已经足够。不过，怎么加入其他操作呢？例如分享，check in 等等。这时我们需要用到两个全新的方法，都定义在 <code>UITableViewDelegate</code></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">tableView(<span class="keyword">_</span>:leadingSwipeActionsConfigurationForRowAt:)</span><br><span class="line">tableView(<span class="keyword">_</span>:trailingSwipeActionsConfigurationForRowAt:)</span><br></pre></td></tr></table></figure>
+
+<p>两个方法一个左划，一个右划，操作完全一样。</p>
+<p>现在，我们想要添加两个动作：删除和分享。在方法中声明两个 <code>UIContextualAction</code> 类型的 action，分别实现删除和分享操作。以下是删除操作：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> deleteAction <span class="operator">=</span> <span class="type">UIContextualAction</span>(style: .destructive, title: <span class="string">&quot;Delete&quot;</span>) &#123; (action, sourceView, completionHandler) <span class="keyword">in</span></span><br><span class="line">    <span class="keyword">self</span>.restaurantNames.remove(at: indexPath.row)</span><br><span class="line">    <span class="keyword">self</span>.restaurantLocations.remove(at: indexPath.row)</span><br><span class="line">    <span class="keyword">self</span>.restaurantTypes.remove(at: indexPath.row)</span><br><span class="line">    <span class="keyword">self</span>.restaurantIsVisited.remove(at: indexPath.row)</span><br><span class="line">    <span class="keyword">self</span>.restaurantImages.remove(at: indexPath.row)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">self</span>.tableView.deleteRows(at: [indexPath], with: .fade)</span><br><span class="line">            </span><br><span class="line">    completionHandler(<span class="literal">true</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>有一点要注意，第 10 行 <code>completionHandler(true)</code>是用来在点击后让 row 回弹。在练习中，我忽略了这一行代码，导致点击 check in 后仍然显示划动后的界面，十分僵硬。</p>
+<p>分享操作基本类似，其中有一些细节，<code>activityController</code> 用于控制分享活动，分享餐馆名称。当 cell 中有图片时，也可以分享出去。先声明一个 <code>UIActivityViewController</code> 类型的活动控制器。然后判断有无图片，赋值。最后展示。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> shareAction <span class="operator">=</span> <span class="type">UIContextualAction</span>(style: .normal, title: <span class="string">&quot;Share&quot;</span>) &#123; (action, sourceView, completionHandle) <span class="keyword">in</span>                                                          </span><br><span class="line">	<span class="keyword">let</span> defaultText <span class="operator">=</span> <span class="string">&quot;Just checking in at &quot;</span> <span class="operator">+</span> <span class="keyword">self</span>.restaurantNames[indexPath.row]</span><br><span class="line">    <span class="keyword">let</span> activityController: <span class="type">UIActivityViewController</span></span><br><span class="line">    <span class="comment">// Is there an image? Use &#x27;if let&#x27; to verify</span></span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">let</span> imageToShare <span class="operator">=</span> <span class="type">UIImage</span>(named: <span class="keyword">self</span>.restaurantImages[indexPath.row]) &#123;</span><br><span class="line">    	activityController <span class="operator">=</span> <span class="type">UIActivityViewController</span>(activityItems: [defaultText, imageToShare], applicationActivities: <span class="literal">nil</span>)</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        activityController <span class="operator">=</span> <span class="type">UIActivityViewController</span>(activityItems: [defaultText], applicationActivities: <span class="literal">nil</span>)</span><br><span class="line">&#125;</span><br><span class="line">	<span class="keyword">self</span>.present(activityController, animated: <span class="literal">true</span>, completion: <span class="literal">nil</span>)</span><br><span class="line">    completionHandle(<span class="literal">true</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这两个方法都是有返回值的，类型为 <code>UISwipeActionsConfiguration</code> ，因此最后我们需要将两个 acitons 整合</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> swipeConfiguration <span class="operator">=</span> <span class="type">UISwipeActionsConfiguration</span>(actions: [deleteAction shareAction])</span><br></pre></td></tr></table></figure>
+
+<p>并将其返回。</p>
+<p>与前面提到的 alter sheet 在 iPad 弹出相同，我们还要规定 activity 弹出的位置以在 iPad 上正常运行。</p>
+<h2 id="个性化-UIContextualAction"><a href="#个性化-UIContextualAction" class="headerlink" title="个性化 UIContextualAction"></a>个性化 UIContextualAction</h2><p>改变按钮的颜色，图标</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">deleteAction.backgroundColor <span class="operator">=</span> <span class="type">UIColor</span>(red: <span class="number">231.0</span><span class="operator">/</span><span class="number">255.0</span>, green: <span class="number">76.0</span><span class="operator">/</span><span class="number">255.0</span>, blue: <span class="number">60.0</span><span class="operator">/</span><span class="number">255.0</span>, alpha: <span class="number">1.0</span>)</span><br><span class="line">deleteAction.image <span class="operator">=</span> <span class="type">UIImage</span>(named: <span class="string">&quot;delete&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>两个调色网站</p>
+<p><a target="_blank" rel="noopener" href="http://www.flatuicolorpicker.com/">http://www.flatuicolorpicker.com/</a></p>
+<p><a target="_blank" rel="noopener" href="https://color.adobe.com/zh/create/color-wheel/">https://color.adobe.com/zh/create/color-wheel/</a></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/StudentJeffRen.github.io/tags/iOS/" rel="tag"># iOS</a>
+              <a href="/StudentJeffRen.github.io/tags/Swift/" rel="tag"># Swift</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/StudentJeffRen.github.io/2018/12/06/%E3%80%90iOS%20old%E3%80%91Chap%208%20%E6%9C%80%E5%9F%BA%E7%A1%80%E7%9A%84%20Table%20Based%20App/" rel="prev" title="最基础的 Table Based App">
+                  <i class="fa fa-chevron-left"></i> 最基础的 Table Based App
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/StudentJeffRen.github.io/2018/12/06/%E3%80%90iOS%20old%E3%80%91Chap%2012%20Navigation%20Controller/" rel="next" title="Navigation Controller">
+                  Navigation Controller <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jeff Ren</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/StudentJeffRen.github.io/js/comments.js"></script><script src="/StudentJeffRen.github.io/js/utils.js"></script><script src="/StudentJeffRen.github.io/js/motion.js"></script><script src="/StudentJeffRen.github.io/js/schemes/muse.js"></script><script src="/StudentJeffRen.github.io/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"jeffren","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/StudentJeffRen.github.io/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

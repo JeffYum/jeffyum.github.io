@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 5.4.2">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/StudentJeffRen.github.io/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/StudentJeffRen.github.io/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/StudentJeffRen.github.io/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/StudentJeffRen.github.io/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/StudentJeffRen.github.io/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.2/css/all.min.css" integrity="sha256-xejo6yLi6vGtAjcMIsY8BHdKsLg7QynVlFMzdQgUuy8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"jeffren.cn","root":"/StudentJeffRen.github.io/","images":"/StudentJeffRen.github.io/images","scheme":"Mist","darkmode":false,"version":"8.12.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/StudentJeffRen.github.io/js/config.js"></script>
+
+    <meta name="description" content="接入 CallKit 的大致框架。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CallKit">
+<meta property="og:url" content="https://jeffren.cn/2022/07/24/%E3%80%90iOS%20new%E3%80%91CallKit/index.html">
+<meta property="og:site_name" content="杰夫的博客">
+<meta property="og:description" content="接入 CallKit 的大致框架。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/StudentJeffRen/ImageHostingService/img/20220722022937.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/StudentJeffRen/ImageHostingService/img/arch.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/StudentJeffRen/ImageHostingService/img/IMG_0657.PNG">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/StudentJeffRen/ImageHostingService/img/Incoming.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/StudentJeffRen/ImageHostingService/img/end.png">
+<meta property="article:published_time" content="2022-07-23T16:00:00.000Z">
+<meta property="article:modified_time" content="2022-08-09T12:40:55.450Z">
+<meta property="article:author" content="Jeff Ren">
+<meta property="article:tag" content="iOS">
+<meta property="article:tag" content="视频通话">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/StudentJeffRen/ImageHostingService/img/20220722022937.png">
+
+
+<link rel="canonical" href="https://jeffren.cn/2022/07/24/%E3%80%90iOS%20new%E3%80%91CallKit/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://jeffren.cn/2022/07/24/%E3%80%90iOS%20new%E3%80%91CallKit/","path":"2022/07/24/【iOS new】CallKit/","title":"CallKit"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>CallKit | 杰夫的博客</title>
+  
+
+  <script src="/StudentJeffRen.github.io/js/third-party/analytics/baidu-analytics.js"></script>
+  <script async src="https://hm.baidu.com/hm.js?f151b1a5a8070426a1f4b8f98750f614"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/StudentJeffRen.github.io/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/StudentJeffRen.github.io/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">杰夫的博客</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/StudentJeffRen.github.io/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/StudentJeffRen.github.io/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/StudentJeffRen.github.io/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/StudentJeffRen.github.io/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#VoIP"><span class="nav-number">1.</span> <span class="nav-text">VoIP</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE"><span class="nav-number">1.1.</span> <span class="nav-text">配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96-VoIP"><span class="nav-number">1.2.</span> <span class="nav-text">初始化 VoIP</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#App-%E4%B8%8E%E7%B3%BB%E7%BB%9F%E9%80%9A%E4%BF%A1"><span class="nav-number">2.</span> <span class="nav-text">App 与系统通信</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#CXProviderDelegate"><span class="nav-number">2.1.</span> <span class="nav-text">CXProviderDelegate</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#CXAction"><span class="nav-number">2.1.1.</span> <span class="nav-text">CXAction</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CXCallController"><span class="nav-number">2.2.</span> <span class="nav-text">CXCallController</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%94%B6%E5%88%B0%E6%9D%A5%E7%94%B5"><span class="nav-number">3.</span> <span class="nav-text">收到来电</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ProviderDelegate-%E7%B1%BB%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">3.1.</span> <span class="nav-text">ProviderDelegate 类初始化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%93%E6%9D%9F%E9%80%9A%E8%AF%9D"><span class="nav-number">4.</span> <span class="nav-text">结束通话</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#CallManager-%E7%B1%BB%E5%AE%9E%E7%8E%B0"><span class="nav-number">4.1.</span> <span class="nav-text">CallManager 类实现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8C%82%E8%B5%B7"><span class="nav-number">5.</span> <span class="nav-text">挂起</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8B%A8%E5%87%BA"><span class="nav-number">6.</span> <span class="nav-text">拨出</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">7.</span> <span class="nav-text">总结</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Jeff Ren"
+      src="/StudentJeffRen.github.io/uploads/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Jeff Ren</p>
+  <div class="site-description" itemprop="description">谦虚谨慎，戒骄戒躁</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/StudentJeffRen.github.io/archives/">
+          <span class="site-state-item-count">38</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/StudentJeffRen.github.io/categories/">
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/StudentJeffRen.github.io/tags/">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/StudentJeffRen" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;StudentJeffRen" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://jeffren.cn/2022/07/24/%E3%80%90iOS%20new%E3%80%91CallKit/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/StudentJeffRen.github.io/uploads/avatar.jpg">
+      <meta itemprop="name" content="Jeff Ren">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="杰夫的博客">
+      <meta itemprop="description" content="谦虚谨慎，戒骄戒躁">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="CallKit | 杰夫的博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          CallKit
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-07-24 00:00:00" itemprop="dateCreated datePublished" datetime="2022-07-24T00:00:00+08:00">2022-07-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-08-09 20:40:55" itemprop="dateModified" datetime="2022-08-09T20:40:55+08:00">2022-08-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/StudentJeffRen.github.io/categories/iOS/" itemprop="url" rel="index"><span itemprop="name">iOS</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/StudentJeffRen.github.io/2022/07/24/%E3%80%90iOS%20new%E3%80%91CallKit/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2022/07/24/【iOS new】CallKit/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>接入 CallKit 的大致框架。</p>
+<span id="more"></span>
+
+<h2 id="VoIP"><a href="#VoIP" class="headerlink" title="VoIP"></a>VoIP</h2><p>VoIP push，提供区别于普通 APNS push 的能力，通过这种 push 方式收到消息时会直接将未启动的 app 激活。也就是说，消息推过来后，能够直接运行回调函数里的代码。iOS 13 之后，VoIP 必须配合 CallKit 使用，否则系统会停止启动 app。PushKit 和 APNS 推送是共存的，所以在系统里需要两个证书。</p>
+<h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><ol>
+<li><p>Background Modes 勾选 Voice over IP</p>
+<p><img src="https://cdn.jsdelivr.net/gh/StudentJeffRen/ImageHostingService/img/20220722022937.png"></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/lin1109221208/article/details/85615882">创建 PushKit 推送证书</a>，证书创建类型选择 VoIP Services Certificate</p>
+</li>
+<li><p>Build Phases -&gt; Link Binary With Libraries -&gt; 添加 PushKit</p>
+</li>
+</ol>
+<h3 id="初始化-VoIP"><a href="#初始化-VoIP" class="headerlink" title="初始化 VoIP"></a>初始化 VoIP</h3><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="type">void</span>)initVoIP &#123;</span><br><span class="line">    PKPushRegistry *pushRegistry = [[PKPushRegistry alloc] initWithQueue:dispatch_get_main_queue()];</span><br><span class="line">    pushRegistry.delegate = <span class="keyword">self</span>;</span><br><span class="line">    pushRegistry.desiredPushTypes = [<span class="built_in">NSSet</span> setWithObject:PKPushTypeVoIP];</span><br><span class="line">    <span class="keyword">self</span>.callManager = [[QWCallManager alloc] init];</span><br><span class="line">    <span class="keyword">self</span>.providerDelegate = [[QWProviderDelegate alloc] initWithCallManager:<span class="keyword">self</span>.callManager];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">pragma</span> mark - PKPushRegistryDelegate</span></span><br><span class="line"><span class="comment">// 应用启动此代理方法会返回设备Token，一般在此将token上传服务器</span></span><br><span class="line">- (<span class="type">void</span>)pushRegistry:(PKPushRegistry *)registry didUpdatePushCredentials:(PKPushCredentials *)credentials forType:(<span class="built_in">NSString</span> *)type &#123;</span><br><span class="line">    <span class="built_in">NSString</span> *str = [<span class="keyword">self</span> hexadecimalStringFromData:credentials.token];</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@&quot;VoIP token:%@&quot;</span>, str);</span><br><span class="line">    <span class="comment">//<span class="doctag">TODO:</span> 上传token处理</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// token 正确转成字符串</span></span><br><span class="line">- (<span class="built_in">NSString</span> *)hexadecimalStringFromData:(<span class="built_in">NSData</span> *)data &#123;</span><br><span class="line">    <span class="built_in">NSUInteger</span> dataLength = data.length;</span><br><span class="line">    <span class="keyword">if</span> (dataLength == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nil</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">const</span> <span class="type">unsigned</span> <span class="type">char</span> *dataBuffer = data.bytes;</span><br><span class="line">    <span class="built_in">NSMutableString</span> *hexString  = [<span class="built_in">NSMutableString</span> stringWithCapacity:(dataLength * <span class="number">2</span>)];</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; dataLength; ++i) &#123;</span><br><span class="line">        [hexString appendFormat:<span class="string">@&quot;%02x&quot;</span>, dataBuffer[i]];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> [hexString <span class="keyword">copy</span>];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 当 VoIP 推送过来时会触发此回调，一般在这里调起本地通知，实现连续响铃、接收视频呼叫请求等操作（必须接 CallKit，否则应用被杀掉）</span></span><br><span class="line">- (<span class="type">void</span>)pushRegistry:(PKPushRegistry *)registry didReceiveIncomingPushWithPayload:(PKPushPayload *)payload forType:(PKPushType)type withCompletionHandler:(<span class="type">void</span> (^)(<span class="type">void</span>))completion &#123;</span><br><span class="line">    <span class="keyword">if</span> (type != PKPushTypeVoIP) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">NSDictionary</span> *dic = payload.dictionaryPayload[<span class="string">@&quot;aps&quot;</span>];</span><br><span class="line">    [<span class="keyword">self</span>.providerDelegate reportIncomingCallWithDictionary:dic hasVideo:<span class="literal">NO</span>];</span><br><span class="line">    </span><br><span class="line">    completion();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="App-与系统通信"><a href="#App-与系统通信" class="headerlink" title="App 与系统通信"></a>App 与系统通信</h2><p><img src="https://cdn.jsdelivr.net/gh/StudentJeffRen/ImageHostingService/img/arch.png" alt="arch.png"></p>
+<h3 id="CXProviderDelegate"><a href="#CXProviderDelegate" class="headerlink" title="CXProviderDelegate"></a>CXProviderDelegate</h3><p>由系统触发的回调方法，CXProviderDelegate 定义了 provider 生命周期事件（带有 CXAction 子类参数），原本 app 内通话相关的方法应该在这里调用。</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="type">void</span>)provider:(CXProvider *)provider performStartCallAction:(CXStartCallAction *)action;</span><br><span class="line">- (<span class="type">void</span>)provider:(CXProvider *)provider performAnswerCallAction:(CXAnswerCallAction *)action</span><br><span class="line">- (<span class="type">void</span>)provider:(CXProvider *)provider performEndCallAction:(CXEndCallAction *)action;</span><br><span class="line">- (<span class="type">void</span>)provider:(CXProvider *)provider performSetMutedCallAction:(CXSetMutedCallAction *)action;</span><br><span class="line">- (<span class="type">void</span>)provider:(CXProvider *)provider performSetHeldCallAction:(CXSetHeldCallAction *)action;</span><br></pre></td></tr></table></figure>
+<h4 id="CXAction"><a href="#CXAction" class="headerlink" title="CXAction"></a>CXAction</h4><p>CXAction 是代表电话操作的抽象类，CallKit 为不同 action 提供不同的具体实现，例如，CXStartCallAction 代表初始化去电，CXAnswerCallAction 代表接听电话。每一个 action 都有唯一的 UUID。</p>
+<h3 id="CXCallController"><a href="#CXCallController" class="headerlink" title="CXCallController"></a>CXCallController</h3><p>App 使用 CXCallController 将<strong>用户发起的请求</strong>通知给系统，例如开始&#x2F;结束&#x2F;静音&#x2F;挂起通话动作，也就是说，这些动作都是在 app 内触发（如下图），而非系统的通话界面。call controller 使用 CXTransaction 发起请求，CXTransaction 包含一个或多个 CXAction 实例，call controller 向系统发送 transaction，如果没有错误发生，系统将触发相应的 CXProviderDelegate 回调。</p>
+<img src="https://cdn.jsdelivr.net/gh/StudentJeffRen/ImageHostingService/img/IMG_0657.PNG" style="zoom:25%;" />
+
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="type">void</span>)requestTransaction:(CXTransaction *)transaction &#123;</span><br><span class="line">    <span class="comment">// 触发 provider 回调</span></span><br><span class="line">    [<span class="keyword">self</span>.callController requestTransaction:transaction completion:^(<span class="built_in">NSError</span> * _Nullable error) &#123;</span><br><span class="line">        <span class="keyword">if</span> (error) &#123;</span><br><span class="line">            <span class="built_in">NSLog</span>(<span class="string">@&quot;Error requesting transaction:%@&quot;</span>, error.localizedDescription);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="built_in">NSLog</span>(<span class="string">@&quot;Requested transaction successfully&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="收到来电"><a href="#收到来电" class="headerlink" title="收到来电"></a>收到来电</h2><p><img src="https://cdn.jsdelivr.net/gh/StudentJeffRen/ImageHostingService/img/Incoming.png" alt="incoming.png"></p>
+<ol>
+<li><p>收到VoIP 推送的来电通知，app 创建 CXCallUpdate，使用 provider 报告给系统</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 公共方法</span></span><br><span class="line">- (<span class="type">void</span>)reportIncomingCallWithUUID:(<span class="built_in">NSUUID</span> *)uuid handle:(<span class="built_in">NSString</span> *)handle hasVideo:(<span class="type">BOOL</span>)hasVideo completion:(<span class="type">void</span> (^)(<span class="built_in">NSError</span> *_Nullable error))completion &#123;</span><br><span class="line">    <span class="comment">// 创建 CXCallUpdate，包含通话元数据（来电者名称，是否支持视频等）</span></span><br><span class="line">    CXCallUpdate *update = [[CXCallUpdate alloc] init];</span><br><span class="line">    update.remoteHandle = [[CXHandle alloc] initWithType:CXHandleTypeGeneric value:handle];</span><br><span class="line">    update.hasVideo = hasVideo;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//弹出电话页面</span></span><br><span class="line">    [<span class="keyword">self</span>.provider reportNewIncomingCallWithUUID:uuid update:update completion:^(<span class="built_in">NSError</span> * _Nullable error) &#123;</span><br><span class="line">        <span class="keyword">if</span> (!error) &#123;</span><br><span class="line">            <span class="comment">// 创建 call 实例，加入 callManager 维护的数组</span></span><br><span class="line">            QWCall *call = [[QWCall alloc] initWithUUID:uuid handle:handle];</span><br><span class="line">            [<span class="keyword">self</span>.callManager add:call];</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> (completion) &#123;</span><br><span class="line">            completion(error);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>展示系统通话界面</p>
+</li>
+<li><p>用户接听电话，系统触发 CXProviderDelegate 回调方法</p>
+</li>
+<li><p>app 通过实现 CXProviderDelegate 的回调方法，接听电话（接入 app 原本的接听逻辑）</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="type">void</span>)provider:(CXProvider *)provider performAnswerCallAction:(CXAnswerCallAction *)action &#123;</span><br><span class="line">    QWCall *call = [<span class="keyword">self</span>.callManager callWithUUID:action.callUUID];</span><br><span class="line">    <span class="keyword">if</span> (!call) &#123;</span><br><span class="line">        [action fail];</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">     </span><br><span class="line">    <span class="comment">// app 将接听命令通过网络传给对端，开始实际音频数据传输，进行通话</span></span><br><span class="line">    [call answer];</span><br><span class="line">    [action fulfill];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="ProviderDelegate-类初始化"><a href="#ProviderDelegate-类初始化" class="headerlink" title="ProviderDelegate 类初始化"></a>ProviderDelegate 类初始化</h3><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">QWProviderDelegate</span>() &lt;<span class="title">CXProviderDelegate</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">strong</span>) CXProvider *provider;</span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">strong</span>) QWCallManager *callManager;</span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">strong</span>) CXProviderConfiguration *providerConfiguration;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"></span><br><span class="line">- (<span class="keyword">instancetype</span>)initWithCallManager:(QWCallManager *)callManager &#123;</span><br><span class="line">    <span class="keyword">self</span> = [<span class="variable language_">super</span> init];</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">self</span>) &#123;</span><br><span class="line">        <span class="keyword">self</span>.callManager = callManager;</span><br><span class="line">        <span class="keyword">self</span>.provider = [[CXProvider alloc] initWithConfiguration:<span class="keyword">self</span>.providerConfiguration];</span><br><span class="line">        [<span class="keyword">self</span>.provider setDelegate:<span class="keyword">self</span> queue:<span class="literal">nil</span>];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">self</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (CXProviderConfiguration *)providerConfiguration &#123;</span><br><span class="line">    <span class="keyword">static</span> CXProviderConfiguration *configInternal = <span class="literal">nil</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">static</span> <span class="built_in">dispatch_once_t</span> onceToken;</span><br><span class="line">    <span class="built_in">dispatch_once</span>(&amp;onceToken, ^&#123;</span><br><span class="line">        configInternal = [[CXProviderConfiguration alloc] initWithLocalizedName:<span class="string">@&quot;AppName&quot;</span>];</span><br><span class="line">        configInternal.supportsVideo = <span class="literal">YES</span>;</span><br><span class="line">        configInternal.maximumCallsPerCallGroup = <span class="number">1</span>;</span><br><span class="line">        configInternal.maximumCallGroups = <span class="number">1</span>;</span><br><span class="line">        configInternal.supportedHandleTypes = [[<span class="built_in">NSSet</span> alloc] initWithObjects:@(CXHandleTypeGeneric), @(CXHandleTypePhoneNumber), <span class="literal">nil</span>];</span><br><span class="line">        <span class="built_in">UIImage</span> *iconMaskImage = [<span class="built_in">UIImage</span> imageNamed:<span class="string">@&quot;AppIcon&quot;</span>];</span><br><span class="line">        configInternal.iconTemplateImageData = <span class="built_in">UIImagePNGRepresentation</span>(iconMaskImage);</span><br><span class="line">    &#125;);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> configInternal;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="type">void</span>)providerDidReset:(<span class="keyword">nonnull</span> CXProvider *)provider &#123;</span><br><span class="line">    <span class="keyword">for</span> (QWCall *call <span class="keyword">in</span> <span class="keyword">self</span>.callManager.calls) &#123;</span><br><span class="line">        [call endCall];</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    [<span class="keyword">self</span>.callManager removeAllCalls];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="结束通话"><a href="#结束通话" class="headerlink" title="结束通话"></a>结束通话</h2><p><img src="https://cdn.jsdelivr.net/gh/StudentJeffRen/ImageHostingService/img/end.png" alt="end.png"></p>
+<p>方式1a：从系统通话界面结束，会直接走回调</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="type">void</span>)provider:(CXProvider *)provider performEndCallAction:(CXEndCallAction *)action &#123;</span><br><span class="line">    QWCall *call = [<span class="keyword">self</span>.callManager callWithUUID:action.callUUID];</span><br><span class="line">    <span class="keyword">if</span> (!call) &#123;</span><br><span class="line">        [action fail];</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line"><span class="comment">//    [self.callAudio stopAudio];</span></span><br><span class="line">    </span><br><span class="line">    [call endCall];</span><br><span class="line">    [action fulfill];</span><br><span class="line">    [<span class="keyword">self</span>.callManager remove:call];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>方式1b：从 app 中结束，将 action 包装进 transaction，通过 CXCallController 向系统发起请求</p>
+<h3 id="CallManager-类实现"><a href="#CallManager-类实现" class="headerlink" title="CallManager 类实现"></a>CallManager 类实现</h3><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">QWCallManager</span>()</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">strong</span>) CXCallController *callController;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"></span><br><span class="line">- (<span class="keyword">instancetype</span>)init &#123;</span><br><span class="line">    <span class="keyword">self</span> = [<span class="variable language_">super</span> init];</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">self</span>) &#123;</span><br><span class="line">        <span class="keyword">self</span>.callController = [[CXCallController alloc] init];</span><br><span class="line">        <span class="keyword">self</span>.calls = [[<span class="built_in">NSMutableArray</span> alloc] init];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">self</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="type">void</span>)endCall:(QWCall *)call &#123;</span><br><span class="line">    CXEndCallAction *endCallAction = [[CXEndCallAction alloc] initWithCallUUID:call.uuid];</span><br><span class="line">    CXTransaction *transaction = [[CXTransaction alloc] initWithAction:endCallAction];</span><br><span class="line">    </span><br><span class="line">    [<span class="keyword">self</span> requestTransaction:transaction];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="挂起"><a href="#挂起" class="headerlink" title="挂起"></a>挂起</h2><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="type">void</span>)provider:(CXProvider *)provider performSetHeldCallAction:(CXSetHeldCallAction *)action &#123;</span><br><span class="line">    QWCall *call = [<span class="keyword">self</span>.callManager callWithUUID:action.callUUID];</span><br><span class="line">    <span class="keyword">if</span> (!call) &#123;</span><br><span class="line">        [action fail];</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    call.state = action.isOnHold ? QWCallStateHeld : QWCallStateActive;</span><br><span class="line">    <span class="keyword">if</span> (call.state == QWCallStateHeld) &#123;</span><br><span class="line">        <span class="comment">// stopAudio</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// startAudio</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    [action fulfill];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="拨出"><a href="#拨出" class="headerlink" title="拨出"></a>拨出</h2><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="type">void</span>)provider:(CXProvider *)provider performStartCallAction:(CXStartCallAction *)action &#123;</span><br><span class="line">    QWCall *call = [[QWCall alloc] initWithUUID:action.callUUID handle:action.handle.value isOutgoing:<span class="literal">YES</span>];</span><br><span class="line">    </span><br><span class="line"><span class="comment">//    [self.callAudio configureAudioSession];</span></span><br><span class="line">    </span><br><span class="line">    __<span class="keyword">weak</span> <span class="keyword">typeof</span>(<span class="keyword">self</span>) weakSelf = <span class="keyword">self</span>;</span><br><span class="line">    __<span class="keyword">weak</span> <span class="keyword">typeof</span>(QWCall *) weakCall = call;</span><br><span class="line">    call.connectedStateChanged = ^&#123;</span><br><span class="line">        <span class="keyword">if</span> (weakCall.connectedState == QWConnectedStatePending) &#123;</span><br><span class="line">            [weakSelf.provider reportOutgoingCallWithUUID:weakCall.uuid startedConnectingAtDate:<span class="literal">nil</span>];</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (weakCall.connectedState == QWConnectedStateComplete) &#123;</span><br><span class="line">            [weakSelf.provider reportOutgoingCallWithUUID:weakCall.uuid connectedAtDate:<span class="literal">nil</span>];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">    </span><br><span class="line">    [call startCall:^(<span class="type">BOOL</span> success) &#123;</span><br><span class="line">        <span class="keyword">if</span> (success) &#123;</span><br><span class="line">            [action fulfill];</span><br><span class="line">            [weakSelf.callManager add:weakCall];</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            [action fail];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="type">void</span>)startCall:(<span class="built_in">NSString</span> *)name videoEnabled:(<span class="type">BOOL</span>)videoEnabled &#123;</span><br><span class="line">    CXHandle *handle = [[CXHandle alloc] initWithType:CXHandleTypeGeneric value:name];</span><br><span class="line">    CXStartCallAction *startCallAction = [[CXStartCallAction alloc] initWithCallUUID:[<span class="built_in">NSUUID</span> UUID] handle:handle];</span><br><span class="line">    startCallAction.video = videoEnabled;</span><br><span class="line">    </span><br><span class="line">    CXTransaction *transaction = [[CXTransaction alloc] initWithAction:startCallAction];</span><br><span class="line">    </span><br><span class="line">    [<span class="keyword">self</span> requestTransaction:transaction];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>至此，CallKit 的大体框架就搭建好了，接下来需要将原 app 内通话的代码，填入 QWCall 的相关方法中，接入难度取决于以前代码的封装程度。附上 3 个类的 .h 文件：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="built_in">NS_ENUM</span>(<span class="built_in">NSUInteger</span>, QWCallState) &#123;</span><br><span class="line">    QWCallStateConnecting,</span><br><span class="line">    QWCallStateActive,</span><br><span class="line">    QWCallStateHeld,</span><br><span class="line">    QWCallStateEnded</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="built_in">NS_ENUM</span>(<span class="built_in">NSUInteger</span>, QWCallConnectedState) &#123;</span><br><span class="line">    QWConnectedStatePending,</span><br><span class="line">    QWConnectedStateComplete</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="type">void</span>(^StateChangedBlock)(<span class="type">void</span>);</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">QWCall</span> : <span class="title">NSObject</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">strong</span>) <span class="built_in">NSUUID</span> *uuid;</span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">assign</span>) <span class="type">BOOL</span> isOutgoing;</span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">strong</span>) <span class="built_in">NSString</span> *handle;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">assign</span>) QWCallState state;</span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">assign</span>) QWCallConnectedState connectedState;</span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">copy</span>) StateChangedBlock stateChanged;</span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">copy</span>) StateChangedBlock connectedStateChanged;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">instancetype</span>)initWithUUID:(<span class="built_in">NSUUID</span> *)uuid handle:(<span class="built_in">NSString</span> *)handle;</span><br><span class="line">- (<span class="keyword">instancetype</span>)initWithUUID:(<span class="built_in">NSUUID</span> *)uuid handle:(<span class="built_in">NSString</span> *)handle isOutgoing:(<span class="type">BOOL</span>)isOutgoing;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 具体功能实现填在这些方法中</span></span><br><span class="line">- (<span class="type">void</span>)start:(<span class="type">void</span> (^)(<span class="type">BOOL</span> success))completion;</span><br><span class="line">- (<span class="type">void</span>)answer;</span><br><span class="line">- (<span class="type">void</span>)end;</span><br><span class="line">- (<span class="type">void</span>)mute;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="type">void</span>(^CallsChangedHandler)(<span class="type">void</span>);</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">QWCallManager</span> : <span class="title">NSObject</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">strong</span>) <span class="built_in">NSMutableArray</span>&lt;QWCall *&gt; *calls;</span><br><span class="line"><span class="comment">// 数组状态回调，用来刷新 app UI</span></span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">copy</span>) CallsChangedHandler callsChangedHandler;</span><br><span class="line"></span><br><span class="line">- (QWCall *)callWithUUID:(<span class="built_in">NSUUID</span> *)uuid;</span><br><span class="line">- (<span class="type">void</span>)add:(QWCall *)call;</span><br><span class="line">- (<span class="type">void</span>)remove:(QWCall *)call;</span><br><span class="line">- (<span class="type">void</span>)removeAllCalls;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 在 app 中拨打/挂断</span></span><br><span class="line">- (<span class="type">void</span>)startCall:(<span class="built_in">NSString</span> *)name videoEnabled:(<span class="type">BOOL</span>)videoEnabled;</span><br><span class="line">- (<span class="type">void</span>)endCall:(QWCall *)call;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">QWProviderDelegate</span> : <span class="title">NSObject</span></span></span><br><span class="line"></span><br><span class="line">- (<span class="keyword">instancetype</span>)initWithCallManager:(QWCallManager *)callManager;</span><br><span class="line">- (<span class="type">void</span>)reportIncomingCallWithUUID:(<span class="built_in">NSUUID</span> *)uuid handle:(<span class="built_in">NSString</span> *)handle hasVideo:(<span class="type">BOOL</span>)hasVideo completion:(<span class="type">void</span> (^)(<span class="built_in">NSError</span> *_Nullable error))completion;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/StudentJeffRen.github.io/tags/iOS/" rel="tag"># iOS</a>
+              <a href="/StudentJeffRen.github.io/tags/%E8%A7%86%E9%A2%91%E9%80%9A%E8%AF%9D/" rel="tag"># 视频通话</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/StudentJeffRen.github.io/2022/06/07/%E3%80%90iOS%20new%E3%80%91%E8%87%AA%E5%8A%A8%E9%87%8A%E6%94%BE%E6%B1%A0%E5%8E%9F%E7%90%86/" rel="prev" title="iOS 自动释放池原理">
+                  <i class="fa fa-chevron-left"></i> iOS 自动释放池原理
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/StudentJeffRen.github.io/2022/08/09/%E3%80%90iOS%20new%E3%80%91%E4%BA%8B%E4%BB%B6%E4%BC%A0%E9%80%92%E5%92%8C%E4%BA%8B%E4%BB%B6%E5%93%8D%E5%BA%94/" rel="next" title="从 UITableViewCell 上按钮点击无效，理解事件传递和事件响应">
+                  从 UITableViewCell 上按钮点击无效，理解事件传递和事件响应 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jeff Ren</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/StudentJeffRen.github.io/js/comments.js"></script><script src="/StudentJeffRen.github.io/js/utils.js"></script><script src="/StudentJeffRen.github.io/js/motion.js"></script><script src="/StudentJeffRen.github.io/js/schemes/muse.js"></script><script src="/StudentJeffRen.github.io/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"jeffren","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/StudentJeffRen.github.io/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

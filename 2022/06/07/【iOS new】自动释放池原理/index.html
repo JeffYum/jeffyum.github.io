@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 5.4.2">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/StudentJeffRen.github.io/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/StudentJeffRen.github.io/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/StudentJeffRen.github.io/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/StudentJeffRen.github.io/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/StudentJeffRen.github.io/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.2/css/all.min.css" integrity="sha256-xejo6yLi6vGtAjcMIsY8BHdKsLg7QynVlFMzdQgUuy8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"jeffren.cn","root":"/StudentJeffRen.github.io/","images":"/StudentJeffRen.github.io/images","scheme":"Mist","darkmode":false,"version":"8.12.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/StudentJeffRen.github.io/js/config.js"></script>
+
+    <meta name="description" content="自动释放池的底层原理。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS 自动释放池原理">
+<meta property="og:url" content="https://jeffren.cn/2022/06/07/%E3%80%90iOS%20new%E3%80%91%E8%87%AA%E5%8A%A8%E9%87%8A%E6%94%BE%E6%B1%A0%E5%8E%9F%E7%90%86/index.html">
+<meta property="og:site_name" content="杰夫的博客">
+<meta property="og:description" content="自动释放池的底层原理。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/StudentJeffRen/ImageHostingService/img/%E6%88%AA%E5%9B%BE.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/StudentJeffRen/ImageHostingService/img/%E6%88%AA%E5%9B%BE1.png">
+<meta property="article:published_time" content="2022-06-06T16:00:00.000Z">
+<meta property="article:modified_time" content="2022-08-09T12:40:55.451Z">
+<meta property="article:author" content="Jeff Ren">
+<meta property="article:tag" content="iOS">
+<meta property="article:tag" content="底层原理">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/StudentJeffRen/ImageHostingService/img/%E6%88%AA%E5%9B%BE.png">
+
+
+<link rel="canonical" href="https://jeffren.cn/2022/06/07/%E3%80%90iOS%20new%E3%80%91%E8%87%AA%E5%8A%A8%E9%87%8A%E6%94%BE%E6%B1%A0%E5%8E%9F%E7%90%86/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://jeffren.cn/2022/06/07/%E3%80%90iOS%20new%E3%80%91%E8%87%AA%E5%8A%A8%E9%87%8A%E6%94%BE%E6%B1%A0%E5%8E%9F%E7%90%86/","path":"2022/06/07/【iOS new】自动释放池原理/","title":"iOS 自动释放池原理"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>iOS 自动释放池原理 | 杰夫的博客</title>
+  
+
+  <script src="/StudentJeffRen.github.io/js/third-party/analytics/baidu-analytics.js"></script>
+  <script async src="https://hm.baidu.com/hm.js?f151b1a5a8070426a1f4b8f98750f614"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/StudentJeffRen.github.io/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/StudentJeffRen.github.io/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">杰夫的博客</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/StudentJeffRen.github.io/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/StudentJeffRen.github.io/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/StudentJeffRen.github.io/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/StudentJeffRen.github.io/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%87%AA%E5%8A%A8%E9%87%8A%E6%94%BE%E6%B1%A0%E5%8E%9F%E7%90%86"><span class="nav-number">1.</span> <span class="nav-text">自动释放池原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#AtAutoreleasePool-%E7%BB%93%E6%9E%84%E4%BD%93"><span class="nav-number">1.1.</span> <span class="nav-text">__AtAutoreleasePool 结构体</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#AutoreleasePoolPage"><span class="nav-number">1.2.</span> <span class="nav-text">AutoreleasePoolPage</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#objc-autoreleasePoolPush-%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0"><span class="nav-number">1.3.</span> <span class="nav-text">objc_autoreleasePoolPush() 构造函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#objc-autoreleasePoolPop-atautoreleasepoolobj-%E6%9E%90%E6%9E%84%E5%87%BD%E6%95%B0"><span class="nav-number">1.4.</span> <span class="nav-text">objc_autoreleasePoolPop(atautoreleasepoolobj) 析构函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%93%E5%8D%B0%E8%87%AA%E5%8A%A8%E9%87%8A%E6%94%BE%E6%B1%A0%E6%83%85%E5%86%B5"><span class="nav-number">1.5.</span> <span class="nav-text">打印自动释放池情况</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#autorelease-%E5%AF%B9%E8%B1%A1%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E8%B0%83%E7%94%A8-release%EF%BC%9F"><span class="nav-number">2.</span> <span class="nav-text">autorelease 对象什么时候调用 release？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A2%AB-autoreleasepool-%E5%8C%85%E8%A3%B9"><span class="nav-number">2.1.</span> <span class="nav-text">被 @autoreleasepool 包裹</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8D%E8%A2%AB-autoreleasepool-%E5%8C%85%E8%A3%B9"><span class="nav-number">2.2.</span> <span class="nav-text">不被 @autoreleasepool 包裹</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Jeff Ren"
+      src="/StudentJeffRen.github.io/uploads/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Jeff Ren</p>
+  <div class="site-description" itemprop="description">谦虚谨慎，戒骄戒躁</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/StudentJeffRen.github.io/archives/">
+          <span class="site-state-item-count">38</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/StudentJeffRen.github.io/categories/">
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/StudentJeffRen.github.io/tags/">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/StudentJeffRen" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;StudentJeffRen" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://jeffren.cn/2022/06/07/%E3%80%90iOS%20new%E3%80%91%E8%87%AA%E5%8A%A8%E9%87%8A%E6%94%BE%E6%B1%A0%E5%8E%9F%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/StudentJeffRen.github.io/uploads/avatar.jpg">
+      <meta itemprop="name" content="Jeff Ren">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="杰夫的博客">
+      <meta itemprop="description" content="谦虚谨慎，戒骄戒躁">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="iOS 自动释放池原理 | 杰夫的博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          iOS 自动释放池原理
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-06-07 00:00:00" itemprop="dateCreated datePublished" datetime="2022-06-07T00:00:00+08:00">2022-06-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-08-09 20:40:55" itemprop="dateModified" datetime="2022-08-09T20:40:55+08:00">2022-08-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/StudentJeffRen.github.io/categories/iOS/" itemprop="url" rel="index"><span itemprop="name">iOS</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/StudentJeffRen.github.io/2022/06/07/%E3%80%90iOS%20new%E3%80%91%E8%87%AA%E5%8A%A8%E9%87%8A%E6%94%BE%E6%B1%A0%E5%8E%9F%E7%90%86/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2022/06/07/【iOS new】自动释放池原理/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>自动释放池的底层原理。</p>
+<span id="more"></span>
+
+<h2 id="自动释放池原理"><a href="#自动释放池原理" class="headerlink" title="自动释放池原理"></a>自动释放池原理</h2><h3 id="AtAutoreleasePool-结构体"><a href="#AtAutoreleasePool-结构体" class="headerlink" title="__AtAutoreleasePool 结构体"></a>__AtAutoreleasePool 结构体</h3><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> main(<span class="type">int</span> argc, <span class="keyword">const</span> <span class="type">char</span> * argv[]) &#123;</span><br><span class="line">    <span class="keyword">@autoreleasepool</span> &#123;</span><br><span class="line">        <span class="comment">//atautoreleasepoolobj = objc_autoreleasePoolPush();</span></span><br><span class="line">        Person *person = [[[Person alloc] init] autorelease];</span><br><span class="line">        <span class="comment">//objc_autoreleasePoolPop(atautoreleasepoolobj);</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> __AtAutoreleasePool &#123;</span><br><span class="line">  __AtAutoreleasePool() &#123; <span class="comment">// 构造函数</span></span><br><span class="line">      atautoreleasepoolobj = objc_autoreleasePoolPush();</span><br><span class="line">  &#125;</span><br><span class="line">    </span><br><span class="line">  ~__AtAutoreleasePool() &#123; <span class="comment">// 析构函数</span></span><br><span class="line">      objc_autoreleasePoolPop(atautoreleasepoolobj);</span><br><span class="line">      </span><br><span class="line">  &#125;</span><br><span class="line">  <span class="type">void</span> * atautoreleasepoolobj;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h3 id="AutoreleasePoolPage"><a href="#AutoreleasePoolPage" class="headerlink" title="AutoreleasePoolPage"></a>AutoreleasePoolPage</h3><p>自动释放池最终由 AutoreleasePoolPage 管理，主要成员变量：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">magic_t <span class="keyword">const</span> magic;</span><br><span class="line">__<span class="keyword">unsafe_unretained</span> <span class="type">id</span> *next; <span class="comment">// 指向下一个可以存放 autorelease 对象地址的地址</span></span><br><span class="line">pthread_t <span class="keyword">const</span> thread;</span><br><span class="line">AutoreleasePoolPage * <span class="keyword">const</span> parent;</span><br><span class="line">AutoreleasePoolPage *child;</span><br><span class="line">uint32_t <span class="keyword">const</span> depth;</span><br><span class="line">uint32_t hiwat;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://cdn.jsdelivr.net/gh/StudentJeffRen/ImageHostingService/img/%E6%88%AA%E5%9B%BE.png"></p>
+<ul>
+<li>占用 4096 字节内存，除了存放内部成员变量，剩下的空间用来存放 <strong>autorelease 对象</strong>的地址。</li>
+<li>通过双向链表连接，存满了会创建新的 Page。</li>
+</ul>
+<h3 id="objc-autoreleasePoolPush-构造函数"><a href="#objc-autoreleasePoolPush-构造函数" class="headerlink" title="objc_autoreleasePoolPush() 构造函数"></a>objc_autoreleasePoolPush() 构造函数</h3><p>将 POOL_BOUNDARY 放入 page，返回 POOL_BOUNDARY 的内存地址。</p>
+<h3 id="objc-autoreleasePoolPop-atautoreleasepoolobj-析构函数"><a href="#objc-autoreleasePoolPop-atautoreleasepoolobj-析构函数" class="headerlink" title="objc_autoreleasePoolPop(atautoreleasepoolobj) 析构函数"></a>objc_autoreleasePoolPop(atautoreleasepoolobj) 析构函数</h3><p>传入 POOL_BOUNDARY 的地址，从最后一个对象开始 release，直到遇到 POOL_BOUNDARY。</p>
+<h3 id="打印自动释放池情况"><a href="#打印自动释放池情况" class="headerlink" title="打印自动释放池情况"></a>打印自动释放池情况</h3><p>使用 <strong>extern</strong> 关键字声明私有函数即可调用</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">extern</span> <span class="type">void</span> _objc_autoreleasePoolPrint(<span class="type">void</span>);</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://cdn.jsdelivr.net/gh/StudentJeffRen/ImageHostingService/img/%E6%88%AA%E5%9B%BE1.png"></p>
+<h2 id="autorelease-对象什么时候调用-release？"><a href="#autorelease-对象什么时候调用-release？" class="headerlink" title="autorelease 对象什么时候调用 release？"></a>autorelease 对象什么时候调用 release？</h2><h3 id="被-autoreleasepool-包裹"><a href="#被-autoreleasepool-包裹" class="headerlink" title="被 @autoreleasepool 包裹"></a>被 @autoreleasepool 包裹</h3><p>大括号结束</p>
+<h3 id="不被-autoreleasepool-包裹"><a href="#不被-autoreleasepool-包裹" class="headerlink" title="不被 @autoreleasepool 包裹"></a>不被 @autoreleasepool 包裹</h3><p> 主线程的 runloop 注册了 2 个 observer:</p>
+<ol>
+<li>监听 kCFRunLoopEntry</li>
+</ol>
+<p>调用 <strong>objc_autoreleasePoolPush()</strong> </p>
+<ol start="2">
+<li>监听 kCFRunLoopBeforeWaiting | kCFRunLoopExit</li>
+</ol>
+<p>kCFRunLoopBeforeWaiting <strong>pop, push</strong></p>
+<p>kCFRunLoopExit <strong>pop</strong></p>
+<p>结论：所处的那一次 RunLoop 休眠之前调用 release。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/StudentJeffRen.github.io/tags/iOS/" rel="tag"># iOS</a>
+              <a href="/StudentJeffRen.github.io/tags/%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/" rel="tag"># 底层原理</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/StudentJeffRen.github.io/2022/06/04/%E3%80%90iOS%20new%E3%80%91%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" rel="prev" title="iOS 内存管理">
+                  <i class="fa fa-chevron-left"></i> iOS 内存管理
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/StudentJeffRen.github.io/2022/07/24/%E3%80%90iOS%20new%E3%80%91CallKit/" rel="next" title="CallKit">
+                  CallKit <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jeff Ren</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/StudentJeffRen.github.io/js/comments.js"></script><script src="/StudentJeffRen.github.io/js/utils.js"></script><script src="/StudentJeffRen.github.io/js/motion.js"></script><script src="/StudentJeffRen.github.io/js/schemes/muse.js"></script><script src="/StudentJeffRen.github.io/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"jeffren","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/StudentJeffRen.github.io/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

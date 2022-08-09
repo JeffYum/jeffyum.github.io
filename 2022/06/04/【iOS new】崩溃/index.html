@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 5.4.2">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/StudentJeffRen.github.io/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/StudentJeffRen.github.io/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/StudentJeffRen.github.io/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/StudentJeffRen.github.io/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/StudentJeffRen.github.io/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.2/css/all.min.css" integrity="sha256-xejo6yLi6vGtAjcMIsY8BHdKsLg7QynVlFMzdQgUuy8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"jeffren.cn","root":"/StudentJeffRen.github.io/","images":"/StudentJeffRen.github.io/images","scheme":"Mist","darkmode":false,"version":"8.12.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/StudentJeffRen.github.io/js/config.js"></script>
+
+    <meta name="description" content="记录项目中遇到的崩溃和解决办法。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS 崩溃">
+<meta property="og:url" content="https://jeffren.cn/2022/06/04/%E3%80%90iOS%20new%E3%80%91%E5%B4%A9%E6%BA%83/index.html">
+<meta property="og:site_name" content="杰夫的博客">
+<meta property="og:description" content="记录项目中遇到的崩溃和解决办法。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-06-03T16:00:00.000Z">
+<meta property="article:modified_time" content="2022-08-09T15:14:51.914Z">
+<meta property="article:author" content="Jeff Ren">
+<meta property="article:tag" content="iOS">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://jeffren.cn/2022/06/04/%E3%80%90iOS%20new%E3%80%91%E5%B4%A9%E6%BA%83/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://jeffren.cn/2022/06/04/%E3%80%90iOS%20new%E3%80%91%E5%B4%A9%E6%BA%83/","path":"2022/06/04/【iOS new】崩溃/","title":"iOS 崩溃"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>iOS 崩溃 | 杰夫的博客</title>
+  
+
+  <script src="/StudentJeffRen.github.io/js/third-party/analytics/baidu-analytics.js"></script>
+  <script async src="https://hm.baidu.com/hm.js?f151b1a5a8070426a1f4b8f98750f614"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/StudentJeffRen.github.io/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/StudentJeffRen.github.io/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">杰夫的博客</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/StudentJeffRen.github.io/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/StudentJeffRen.github.io/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/StudentJeffRen.github.io/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/StudentJeffRen.github.io/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%A6%E5%8F%B7%E5%8C%96"><span class="nav-number">1.</span> <span class="nav-text">符号化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%91%BD%E4%BB%A4%EF%BC%9A%E7%AC%A6%E5%8F%B7%E5%8C%96%E6%95%B4%E4%B8%AA-crash-%E6%96%87%E4%BB%B6"><span class="nav-number">1.1.</span> <span class="nav-text">命令：符号化整个 .crash 文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B7%A5%E5%85%B7%EF%BC%9A%E5%8D%95%E8%A1%8C%E7%AC%A6%E5%8F%B7%E5%8C%96"><span class="nav-number">1.2.</span> <span class="nav-text">工具：单行符号化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Organlizer"><span class="nav-number">1.3.</span> <span class="nav-text">Organlizer</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%90%9C%E7%B4%A2%E5%B4%A9%E6%BA%83%E5%88%B0%E5%93%AA%E4%B8%AA%E6%96%87%E4%BB%B6%E5%A4%B9%E4%B8%8B"><span class="nav-number">2.</span> <span class="nav-text">搜索崩溃到哪个文件夹下</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%81%87%E5%88%B0%E7%9A%84%E5%B4%A9%E6%BA%83"><span class="nav-number">3.</span> <span class="nav-text">遇到的崩溃</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Unrecognized-Selector"><span class="nav-number">3.1.</span> <span class="nav-text">Unrecognized Selector</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%B9%E5%99%A8%E7%B1%BB%E6%8F%92%E5%85%A5-nil"><span class="nav-number">3.2.</span> <span class="nav-text">容器类插入 nil</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%99%A4%E4%BB%A5-0"><span class="nav-number">3.3.</span> <span class="nav-text">除以 0</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9D%9E%E4%B8%BB%E7%BA%BF%E7%A8%8B%E5%88%B7%E6%96%B0-UI"><span class="nav-number">3.4.</span> <span class="nav-text">非主线程刷新 UI</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#NSNotification"><span class="nav-number">3.5.</span> <span class="nav-text">NSNotification</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#KVO"><span class="nav-number">3.6.</span> <span class="nav-text">KVO</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Jeff Ren"
+      src="/StudentJeffRen.github.io/uploads/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Jeff Ren</p>
+  <div class="site-description" itemprop="description">谦虚谨慎，戒骄戒躁</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/StudentJeffRen.github.io/archives/">
+          <span class="site-state-item-count">38</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/StudentJeffRen.github.io/categories/">
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/StudentJeffRen.github.io/tags/">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/StudentJeffRen" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;StudentJeffRen" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://jeffren.cn/2022/06/04/%E3%80%90iOS%20new%E3%80%91%E5%B4%A9%E6%BA%83/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/StudentJeffRen.github.io/uploads/avatar.jpg">
+      <meta itemprop="name" content="Jeff Ren">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="杰夫的博客">
+      <meta itemprop="description" content="谦虚谨慎，戒骄戒躁">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="iOS 崩溃 | 杰夫的博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          iOS 崩溃
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-06-04 00:00:00" itemprop="dateCreated datePublished" datetime="2022-06-04T00:00:00+08:00">2022-06-04</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-08-09 23:14:51" itemprop="dateModified" datetime="2022-08-09T23:14:51+08:00">2022-08-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/StudentJeffRen.github.io/categories/iOS/" itemprop="url" rel="index"><span itemprop="name">iOS</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/StudentJeffRen.github.io/2022/06/04/%E3%80%90iOS%20new%E3%80%91%E5%B4%A9%E6%BA%83/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2022/06/04/【iOS new】崩溃/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>记录项目中遇到的崩溃和解决办法。</p>
+<span id="more"></span>
+
+<h2 id="符号化"><a href="#符号化" class="headerlink" title="符号化"></a>符号化</h2><h3 id="命令：符号化整个-crash-文件"><a href="#命令：符号化整个-crash-文件" class="headerlink" title="命令：符号化整个 .crash 文件"></a>命令：符号化整个 .crash 文件</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> DEVELOPER_DIR=<span class="string">&quot;/Applications/Xcode.app/Contents/Developer&quot;</span></span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$PATH</span>:/Applications/Xcode.app/Contents/SharedFrameworks/DVTFoundation.framework/Versions/A/Resources/</span><br><span class="line"></span><br><span class="line">symbolicatecrash XXX.crash -o YYY.crash</span><br></pre></td></tr></table></figure>
+
+<h3 id="工具：单行符号化"><a href="#工具：单行符号化" class="headerlink" title="工具：单行符号化"></a>工具：单行符号化</h3><p><a target="_blank" rel="noopener" href="https://github.com/answer-huang/dSYMTools">dSYMTools</a></p>
+<h3 id="Organlizer"><a href="#Organlizer" class="headerlink" title="Organlizer"></a>Organlizer</h3><p>本地有 Archives，符号化自动完成</p>
+<h2 id="搜索崩溃到哪个文件夹下"><a href="#搜索崩溃到哪个文件夹下" class="headerlink" title="搜索崩溃到哪个文件夹下"></a>搜索崩溃到哪个文件夹下</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"> grep -r 关键字 .</span><br></pre></td></tr></table></figure>
+
+<h2 id="遇到的崩溃"><a href="#遇到的崩溃" class="headerlink" title="遇到的崩溃"></a>遇到的崩溃</h2><h3 id="Unrecognized-Selector"><a href="#Unrecognized-Selector" class="headerlink" title="Unrecognized Selector"></a>Unrecognized Selector</h3><p>有一次误删了项目中崩溃防护的库，导致版本更新后 Organizer 中显示大量来自第三方库而且以前从没出现过的崩溃，由此知道原来有些崩溃是可以通过 Runtime 做全局防护的。</p>
+<p>项目中的例子：<strong>protocol</strong> 是 @optional，所以我们本地代码并没有提供实现，但 SDK 内部调用时没有判断 delegate respondsToSelector。</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// QHVCUploader bug，不实现会崩溃</span></span><br><span class="line">- (<span class="type">void</span>)didUpload:(<span class="type">id</span>)uploader progress:(<span class="type">float</span>)progress &#123;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>解决：提供空实现</p>
+<h3 id="容器类插入-nil"><a href="#容器类插入-nil" class="headerlink" title="容器类插入 nil"></a>容器类插入 nil</h3><p>解决：插入时使用宏校验参数</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> RJNull(name)  isEmpty(name) ? @<span class="string">&quot;&quot;</span> : name</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//对象判空</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">inline</span> <span class="type">BOOL</span> isEmpty(<span class="type">id</span> thing) &#123;</span><br><span class="line">    <span class="keyword">return</span> thing == <span class="literal">nil</span> || </span><br><span class="line">    [thing isEqual:[<span class="built_in">NSNull</span> null]] || </span><br><span class="line">    ([thing respondsToSelector:<span class="keyword">@selector</span>(length)]</span><br><span class="line">        &amp;&amp; [(<span class="built_in">NSData</span> *)thing length] == <span class="number">0</span>) || </span><br><span class="line">    ([thing respondsToSelector:<span class="keyword">@selector</span>(count)]</span><br><span class="line">        &amp;&amp; [(<span class="built_in">NSArray</span> *)thing count] == <span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="除以-0"><a href="#除以-0" class="headerlink" title="除以 0"></a>除以 0</h3><p>定位楼层，按比例在地图上绘制大楼，服务器传的总楼层数为 0，导致除以 0。</p>
+<h3 id="非主线程刷新-UI"><a href="#非主线程刷新-UI" class="headerlink" title="非主线程刷新 UI"></a>非主线程刷新 UI</h3><h3 id="NSNotification"><a href="#NSNotification" class="headerlink" title="NSNotification"></a>NSNotification</h3><p>iOS 9 之前，在 NSNotificationCenter 添加一个对象为观察者后，没有在对象 dealloc 时移除观察者。</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="type">void</span>)dealloc &#123;</span><br><span class="line">    [[<span class="built_in">NSNotificationCenter</span> defaultCenter] removeObserver:<span class="keyword">self</span>];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="KVO"><a href="#KVO" class="headerlink" title="KVO"></a>KVO</h3><ol>
+<li>KVO 添加和移除次数不匹配：移除未注册的观察者，移除多次</li>
+<li>被观察者在 dealloc 时仍注册者 KVO</li>
+<li>添加了观察者，未实现 <code>observeValueForKeyPath:ofObject:change:context:</code> 方法</li>
+<li>keyPath &#x3D;&#x3D; nil</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/StudentJeffRen.github.io/tags/iOS/" rel="tag"># iOS</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/StudentJeffRen.github.io/2022/05/22/%E3%80%90iOS%20new%E3%80%91%E7%90%86%E8%A7%A3%E5%9B%9E%E8%B0%83%EF%BC%8Cdelegate%EF%BC%8Cblock/" rel="prev" title="理解回调，delegate，block">
+                  <i class="fa fa-chevron-left"></i> 理解回调，delegate，block
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/StudentJeffRen.github.io/2022/06/04/%E3%80%90iOS%20new%E3%80%91%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" rel="next" title="iOS 内存管理">
+                  iOS 内存管理 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jeff Ren</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/StudentJeffRen.github.io/js/comments.js"></script><script src="/StudentJeffRen.github.io/js/utils.js"></script><script src="/StudentJeffRen.github.io/js/motion.js"></script><script src="/StudentJeffRen.github.io/js/schemes/muse.js"></script><script src="/StudentJeffRen.github.io/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"jeffren","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/StudentJeffRen.github.io/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

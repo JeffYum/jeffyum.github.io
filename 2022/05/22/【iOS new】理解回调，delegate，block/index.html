@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 5.4.2">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/StudentJeffRen.github.io/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/StudentJeffRen.github.io/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/StudentJeffRen.github.io/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/StudentJeffRen.github.io/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/StudentJeffRen.github.io/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.2/css/all.min.css" integrity="sha256-xejo6yLi6vGtAjcMIsY8BHdKsLg7QynVlFMzdQgUuy8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"jeffren.cn","root":"/StudentJeffRen.github.io/","images":"/StudentJeffRen.github.io/images","scheme":"Mist","darkmode":false,"version":"8.12.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/StudentJeffRen.github.io/js/config.js"></script>
+
+    <meta name="description" content="记得刚入职的时候，听老师傅讲解项目代码，讲到“回调”时我很迷糊，问了句“回调是什么？”，老师傅一下子脸都黑了，说“你这基础不扎实啊。”的确，大学时跟着教程照猫画虎写 App，从来没真正理解透彻回调到底干什么用的，这可能是初学者难以理解的部分，本文以 MUST+ 课程表 ViewController 和 View 的通信，以及 YTKNetwork 网络请求的成功失败回调，总结 delegate 和">
+<meta property="og:type" content="article">
+<meta property="og:title" content="理解回调，delegate，block">
+<meta property="og:url" content="https://jeffren.cn/2022/05/22/%E3%80%90iOS%20new%E3%80%91%E7%90%86%E8%A7%A3%E5%9B%9E%E8%B0%83%EF%BC%8Cdelegate%EF%BC%8Cblock/index.html">
+<meta property="og:site_name" content="杰夫的博客">
+<meta property="og:description" content="记得刚入职的时候，听老师傅讲解项目代码，讲到“回调”时我很迷糊，问了句“回调是什么？”，老师傅一下子脸都黑了，说“你这基础不扎实啊。”的确，大学时跟着教程照猫画虎写 App，从来没真正理解透彻回调到底干什么用的，这可能是初学者难以理解的部分，本文以 MUST+ 课程表 ViewController 和 View 的通信，以及 YTKNetwork 网络请求的成功失败回调，总结 delegate 和">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/StudentJeffRen/ImageHostingService/img/IMG_B5C694E03FD0-1.jpeg">
+<meta property="article:published_time" content="2022-05-21T16:00:00.000Z">
+<meta property="article:modified_time" content="2022-08-09T12:40:55.451Z">
+<meta property="article:author" content="Jeff Ren">
+<meta property="article:tag" content="iOS">
+<meta property="article:tag" content="Objective-C">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/StudentJeffRen/ImageHostingService/img/IMG_B5C694E03FD0-1.jpeg">
+
+
+<link rel="canonical" href="https://jeffren.cn/2022/05/22/%E3%80%90iOS%20new%E3%80%91%E7%90%86%E8%A7%A3%E5%9B%9E%E8%B0%83%EF%BC%8Cdelegate%EF%BC%8Cblock/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://jeffren.cn/2022/05/22/%E3%80%90iOS%20new%E3%80%91%E7%90%86%E8%A7%A3%E5%9B%9E%E8%B0%83%EF%BC%8Cdelegate%EF%BC%8Cblock/","path":"2022/05/22/【iOS new】理解回调，delegate，block/","title":"理解回调，delegate，block"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>理解回调，delegate，block | 杰夫的博客</title>
+  
+
+  <script src="/StudentJeffRen.github.io/js/third-party/analytics/baidu-analytics.js"></script>
+  <script async src="https://hm.baidu.com/hm.js?f151b1a5a8070426a1f4b8f98750f614"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/StudentJeffRen.github.io/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/StudentJeffRen.github.io/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">杰夫的博客</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/StudentJeffRen.github.io/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/StudentJeffRen.github.io/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/StudentJeffRen.github.io/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/StudentJeffRen.github.io/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#MUST-%E8%AF%BE%E7%A8%8B%E8%A1%A8"><span class="nav-number">1.</span> <span class="nav-text">MUST+ 课程表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Delegate-%E5%A4%84%E7%90%86-view-%E4%B8%AD%E7%9A%84%E7%82%B9%E5%87%BB%E4%BA%8B%E4%BB%B6"><span class="nav-number">2.</span> <span class="nav-text">Delegate 处理 view 中的点击事件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#YTKNetwork-%E7%BD%91%E7%BB%9C%E8%AF%B7%E6%B1%82%E6%88%90%E5%8A%9F%E5%A4%B1%E8%B4%A5%E5%9B%9E%E8%B0%83"><span class="nav-number">3.</span> <span class="nav-text">YTKNetwork 网络请求成功失败回调</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Jeff Ren"
+      src="/StudentJeffRen.github.io/uploads/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Jeff Ren</p>
+  <div class="site-description" itemprop="description">谦虚谨慎，戒骄戒躁</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/StudentJeffRen.github.io/archives/">
+          <span class="site-state-item-count">38</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/StudentJeffRen.github.io/categories/">
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/StudentJeffRen.github.io/tags/">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/StudentJeffRen" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;StudentJeffRen" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://jeffren.cn/2022/05/22/%E3%80%90iOS%20new%E3%80%91%E7%90%86%E8%A7%A3%E5%9B%9E%E8%B0%83%EF%BC%8Cdelegate%EF%BC%8Cblock/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/StudentJeffRen.github.io/uploads/avatar.jpg">
+      <meta itemprop="name" content="Jeff Ren">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="杰夫的博客">
+      <meta itemprop="description" content="谦虚谨慎，戒骄戒躁">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="理解回调，delegate，block | 杰夫的博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          理解回调，delegate，block
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-05-22 00:00:00" itemprop="dateCreated datePublished" datetime="2022-05-22T00:00:00+08:00">2022-05-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-08-09 20:40:55" itemprop="dateModified" datetime="2022-08-09T20:40:55+08:00">2022-08-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/StudentJeffRen.github.io/categories/iOS/" itemprop="url" rel="index"><span itemprop="name">iOS</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/StudentJeffRen.github.io/2022/05/22/%E3%80%90iOS%20new%E3%80%91%E7%90%86%E8%A7%A3%E5%9B%9E%E8%B0%83%EF%BC%8Cdelegate%EF%BC%8Cblock/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2022/05/22/【iOS new】理解回调，delegate，block/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>记得刚入职的时候，听老师傅讲解项目代码，讲到“回调”时我很迷糊，问了句“回调是什么？”，老师傅一下子脸都黑了，说“你这基础不扎实啊。”的确，大学时跟着教程照猫画虎写 App，从来没真正理解透彻回调到底干什么用的，这可能是初学者难以理解的部分，本文以 <a target="_blank" rel="noopener" href="https://github.com/StudentJeffRen/MUSTPlus">MUST+</a> 课程表 ViewController 和 View 的通信，以及 <a target="_blank" rel="noopener" href="https://github.com/yuantiku/YTKNetwork">YTKNetwork</a> 网络请求的成功失败回调，总结 delegate 和 block 在实现回调时的用法。</p>
+<span id="more"></span>
+
+<h2 id="MUST-课程表"><a href="#MUST-课程表" class="headerlink" title="MUST+ 课程表"></a>MUST+ 课程表</h2><img src="https://cdn.jsdelivr.net/gh/StudentJeffRen/ImageHostingService/img/IMG_B5C694E03FD0-1.jpeg" style="zoom:50%;" />
+
+<p>课程表整体封装成一个 View</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">strong</span>) <span class="built_in">MPTimetableView</span> *timetableView;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Delegate-处理-view-中的点击事件"><a href="#Delegate-处理-view-中的点击事件" class="headerlink" title="Delegate 处理 view 中的点击事件"></a>Delegate 处理 view 中的点击事件</h2><p>点击课程表中的课程块，会打开一个新的页面显示更详细的课程信息。因为代表每一门课程的 UIButton 由 MPTimetableView 持有，为了遵循 MVC 模式，按钮<strong>点击事件</strong>由 View 接收，而<strong>打开一个新的页面</strong>需要传递给 Controller 处理，这时我们可以使用 delegate 来实现，下面是具体步骤：</p>
+<ol>
+<li>MPTimetableView.h @interface 之前定义 <code>MPTimetableViewDelegate</code></li>
+</ol>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@protocol</span> <span class="title">MPTimetableViewDelegate</span> &lt;<span class="title">NSObject</span>&gt;</span></span><br><span class="line"></span><br><span class="line">- (<span class="type">void</span>)clickClassButton:(<span class="built_in">MPCourseButton</span> *)button;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>MPTimetableView 添加属性 <code>delegate</code></li>
+</ol>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">MPTimetableView</span> : <span class="title">UIView</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">weak</span>) <span class="type">id</span>&lt;<span class="built_in">MPTimetableViewDelegate</span>&gt; delegate;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>MPTimetableView 初始化课程 UIButton 时添加点击事件</li>
+</ol>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[button addTarget:<span class="keyword">self</span> action:<span class="keyword">@selector</span>(clickClass:) forControlEvents:<span class="built_in">UIControlEventTouchUpInside</span>];</span><br></pre></td></tr></table></figure>
+
+<ol start="4">
+<li>MPTimetableView 实现 <code>clickClass:</code> 方法</li>
+</ol>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="type">void</span>)clickClass:(<span class="built_in">MPCourseButton</span> *)button &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">self</span>.delegate &amp;&amp; [<span class="keyword">self</span>.delegate respondsToSelector:<span class="keyword">@selector</span>(clickClassButton:)]) &#123;</span><br><span class="line">        [<span class="keyword">self</span>.delegate clickClassButton:button];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="5">
+<li>MPTimetableViewController 遵循 MPtimetableViewDelegate 协议</li>
+</ol>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">MPTimetableViewController</span> () &lt;<span class="title">MPTimetableViewDelegate</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<ol start="6">
+<li>MPTimetableViewController 初始化 timetableView 时，将它的 delegate 属性赋值为 self</li>
+</ol>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">self</span>.timetableView = [[<span class="built_in">MPTimetableView</span> alloc] initWithFrame:<span class="built_in">CGRectMake</span>(<span class="number">0</span>, kNavigationBarHeight, K_SCREEN_WIDTH, K_SCREEN_HEIGHT-kNavigationBarHeight-kTabBarHeight)];</span><br><span class="line"><span class="keyword">self</span>.timetableView.delegate = <span class="keyword">self</span>;</span><br><span class="line">[<span class="keyword">self</span>.view addSubview:<span class="keyword">self</span>.timetableView];</span><br></pre></td></tr></table></figure>
+
+<ol start="7">
+<li>MPTimetableViewController 实现协议中定义的方法</li>
+</ol>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="type">void</span>)clickClassButton:(<span class="built_in">MPCourseButton</span> *)button &#123;</span><br><span class="line">    <span class="comment">// 打开课程详细页面</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样一来，第 7 步中的代码会在按钮被点击时调用，实现了将 View 中的点击事件交给 Controller 处理，分工明确。</p>
+<h2 id="YTKNetwork-网络请求成功失败回调"><a href="#YTKNetwork-网络请求成功失败回调" class="headerlink" title="YTKNetwork 网络请求成功失败回调"></a>YTKNetwork 网络请求成功失败回调</h2><p>向服务器发起拉取课程表信息的请求后，成功了刷新 UI，失败了则给出错误提示。这是 MPTimetableViewController 中网络请求部分的实现：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 遵从协议 YTKRequestDelegate</span></span><br><span class="line"><span class="comment">// @interface MPTimetableViewController () &lt;MPTimetableViewDelegate, YTKRequestDelegate&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">pragma</span> mark - 从服务器获取课程信息</span></span><br><span class="line">- (<span class="type">void</span>)fetchCourseList &#123;</span><br><span class="line">    <span class="built_in">MPCourseRequest</span> *request = [[<span class="built_in">MPCourseRequest</span> alloc] init];</span><br><span class="line">    request.resultClass = [<span class="built_in">MPCourse</span> <span class="keyword">class</span>];</span><br><span class="line">    request.delegate = <span class="keyword">self</span>;</span><br><span class="line">    [request start];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="type">void</span>)requestFinished:(<span class="built_in">MPCourseRequest</span> *)request &#123;</span><br><span class="line">    <span class="keyword">self</span>.courseArray = request.responseItem.parsedData;</span><br><span class="line">    [<span class="keyword">self</span> buildCourseViewWithDate:[<span class="built_in">NSDate</span> now]];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="type">void</span>)requestFailed:(<span class="built_in">MPCourseRequest</span> *)request &#123;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@&quot;&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>第一个方法在首次进入或者点击刷新按钮时调用，发起一个网络请求。第二三个方法就是 YTKNetwork 定义的“回调”，网络请求的结果都包含在参数 request 中，我们需要用什么从里面取就行，比如请求成功，拿到了课程表数组，我们就能用这个数组来构建 UI，当然，从原始 JSON 到可以直接被 View 使用的数据结构，这中间还需要一些转换。</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@protocol</span> <span class="title">YTKRequestDelegate</span> &lt;<span class="title">NSObject</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">@optional</span></span><br><span class="line"><span class="comment">///  Tell the delegate that the request has finished successfully.</span></span><br><span class="line"><span class="comment">///</span></span><br><span class="line"><span class="comment">///  @param request The corresponding request.</span></span><br><span class="line">- (<span class="type">void</span>)requestFinished:(__kindof YTKBaseRequest *)request;</span><br><span class="line"></span><br><span class="line"><span class="comment">///  Tell the delegate that the request has failed.</span></span><br><span class="line"><span class="comment">///</span></span><br><span class="line"><span class="comment">///  @param request The corresponding request.</span></span><br><span class="line">- (<span class="type">void</span>)requestFailed:(__kindof YTKBaseRequest *)request;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+
+<p>YTKNetwork 也支持 block 回调，block 的定义方式不可谓不奇怪，我现在写 block 还会去看看之前怎么写的，有个叫 <a target="_blank" rel="noopener" href="http://fuckingblocksyntax.com/">fuckingblocksyntax</a> 的网站专门讲了 block 在各种地方的声明方式，越看越晕。我们还是以 YTKRequestCompletionBlock 为例，看看最常见的用法：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="type">void</span>(^YTKRequestCompletionBlock)(__kindof YTKBaseRequest *request);</span><br></pre></td></tr></table></figure>
+
+<p>YTKRequestCompletionBlock 是名字，后面括号里是参数，也就是调起该回调时要传的参数，例如这里的 strongSelf</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 来自 YTKRequest.m</span></span><br><span class="line">YTKRequest *strongSelf = <span class="keyword">self</span>;</span><br><span class="line"><span class="keyword">if</span> (strongSelf.successCompletionBlock) &#123;</span><br><span class="line">    strongSelf.successCompletionBlock(strongSelf);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>实现回调时得益于 Xcode 自动补全，一顿回车就能在 block 中使用传过来的 strongSelf(也就是 request)</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 使用</span></span><br><span class="line">[request startWithCompletionBlockWithSuccess:^(<span class="built_in">MPCourseRequest</span> *request) &#123;</span><br><span class="line">    <span class="keyword">self</span>.courseArray = request.responseItem.parsedData;</span><br><span class="line">    [<span class="keyword">self</span> buildCourseViewWithDate:[<span class="built_in">NSDate</span> now]];    </span><br><span class="line">&#125; failure:^(__kindof YTKBaseRequest * _Nonnull request) &#123;</span><br><span class="line">        </span><br><span class="line">&#125;];</span><br><span class="line"></span><br><span class="line"><span class="comment">///  定义</span></span><br><span class="line"><span class="comment">///  Convenience method to start the request with block callbacks.</span></span><br><span class="line">- (<span class="type">void</span>)startWithCompletionBlockWithSuccess:(<span class="keyword">nullable</span> YTKRequestCompletionBlock)success</span><br><span class="line">                                    failure:(<span class="keyword">nullable</span> YTKRequestCompletionBlock)failure;</span><br></pre></td></tr></table></figure>
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>本文介绍了 Delegate 和 Block 实现回调的用法。所谓回调(callback)，可以理解成某种条件(点击、请求成功失败)触发后要执行的逻辑，让每个类各司其职(View 专注于 UI 层更新，网络请求库做网络请求，Controller 实现业务逻辑)，保持代码结构清晰。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/StudentJeffRen.github.io/tags/iOS/" rel="tag"># iOS</a>
+              <a href="/StudentJeffRen.github.io/tags/Objective-C/" rel="tag"># Objective-C</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/StudentJeffRen.github.io/2021/12/17/2021.12.17%E9%87%8D%E5%BB%BA/" rel="prev" title="全新开始">
+                  <i class="fa fa-chevron-left"></i> 全新开始
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/StudentJeffRen.github.io/2022/06/04/%E3%80%90iOS%20new%E3%80%91%E5%B4%A9%E6%BA%83/" rel="next" title="iOS 崩溃">
+                  iOS 崩溃 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jeff Ren</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/StudentJeffRen.github.io/js/comments.js"></script><script src="/StudentJeffRen.github.io/js/utils.js"></script><script src="/StudentJeffRen.github.io/js/motion.js"></script><script src="/StudentJeffRen.github.io/js/schemes/muse.js"></script><script src="/StudentJeffRen.github.io/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"jeffren","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/StudentJeffRen.github.io/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>
