@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 5.4.2">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/StudentJeffRen.github.io/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/StudentJeffRen.github.io/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/StudentJeffRen.github.io/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/StudentJeffRen.github.io/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/StudentJeffRen.github.io/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.2/css/all.min.css" integrity="sha256-xejo6yLi6vGtAjcMIsY8BHdKsLg7QynVlFMzdQgUuy8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"jeffren.cn","root":"/StudentJeffRen.github.io/","images":"/StudentJeffRen.github.io/images","scheme":"Mist","darkmode":false,"version":"8.12.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/StudentJeffRen.github.io/js/config.js"></script>
+
+    <meta name="description" content="折磨 ChatGPT 系列。本文详细介绍了两种主要的代码整合方式——Rebase 和 Merge，阐明了它们之间的区别以及各自的优势。还将介绍在何时应该使用 Rebase，何时应该使用 Merge，以及如何在使用 Rebase 时避免潜在的问题。本文对于那些希望更深入了解 Git 工作流并提升团队协作效率的开发者非常有帮助。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Git：Rebase 和 Merge 的区别及其使用场景">
+<meta property="og:url" content="https://jeffren.cn/2023/06/11/%E3%80%90Git%E3%80%91Rebase%E5%92%8CMerge%E7%9A%84%E5%8C%BA%E5%88%AB%E5%8F%8A%E5%85%B6%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF/index.html">
+<meta property="og:site_name" content="杰夫的博客">
+<meta property="og:description" content="折磨 ChatGPT 系列。本文详细介绍了两种主要的代码整合方式——Rebase 和 Merge，阐明了它们之间的区别以及各自的优势。还将介绍在何时应该使用 Rebase，何时应该使用 Merge，以及如何在使用 Rebase 时避免潜在的问题。本文对于那些希望更深入了解 Git 工作流并提升团队协作效率的开发者非常有帮助。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/StudentJeffRen/ImageHostingService/img/202306111805666.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/StudentJeffRen/ImageHostingService/img/202306111806481.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/StudentJeffRen/ImageHostingService/img/202306111806188.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/StudentJeffRen/ImageHostingService/img/202306111806396.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/StudentJeffRen/ImageHostingService/img/202306111807524.png">
+<meta property="article:published_time" content="2023-06-10T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-06-11T10:20:00.747Z">
+<meta property="article:author" content="Jeff Ren">
+<meta property="article:tag" content="Git">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/StudentJeffRen/ImageHostingService/img/202306111805666.png">
+
+
+<link rel="canonical" href="https://jeffren.cn/2023/06/11/%E3%80%90Git%E3%80%91Rebase%E5%92%8CMerge%E7%9A%84%E5%8C%BA%E5%88%AB%E5%8F%8A%E5%85%B6%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://jeffren.cn/2023/06/11/%E3%80%90Git%E3%80%91Rebase%E5%92%8CMerge%E7%9A%84%E5%8C%BA%E5%88%AB%E5%8F%8A%E5%85%B6%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF/","path":"2023/06/11/【Git】Rebase和Merge的区别及其使用场景/","title":"Git：Rebase 和 Merge 的区别及其使用场景"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Git：Rebase 和 Merge 的区别及其使用场景 | 杰夫的博客</title>
+  
+
+  <script src="/StudentJeffRen.github.io/js/third-party/analytics/baidu-analytics.js"></script>
+  <script async src="https://hm.baidu.com/hm.js?f151b1a5a8070426a1f4b8f98750f614"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/StudentJeffRen.github.io/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/StudentJeffRen.github.io/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">杰夫的博客</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/StudentJeffRen.github.io/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/StudentJeffRen.github.io/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/StudentJeffRen.github.io/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/StudentJeffRen.github.io/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#rebase-%E5%92%8C-merge-%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB%EF%BC%8C%E5%88%86%E5%88%AB%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E4%BD%BF%E7%94%A8%EF%BC%9F"><span class="nav-number">1.</span> <span class="nav-text">rebase 和 merge 有什么区别，分别什么时候使用？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%86-dev-%E5%90%88%E5%B9%B6%E5%88%B0%E6%88%91%E8%87%AA%E5%B7%B1%E7%9A%84%E5%BC%80%E5%8F%91%E5%88%86%E6%94%AF%EF%BC%8C%E5%8F%AF%E4%BB%A5%E4%BD%BF%E7%94%A8-rebase-%E5%90%97%EF%BC%9F"><span class="nav-number">2.</span> <span class="nav-text">将 dev 合并到我自己的开发分支，可以使用 rebase 吗？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8A%8A%E6%88%91%E7%9A%84%E5%BC%80%E5%8F%91%E5%88%86%E6%94%AF%E5%90%88%E5%85%A5-dev%EF%BC%8C%E7%94%A8-merge-%E6%9B%B4%E5%90%88%E9%80%82%E5%AF%B9%E5%90%97%EF%BC%9F"><span class="nav-number">3.</span> <span class="nav-text">把我的开发分支合入 dev，用 merge 更合适对吗？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%89%BA%E7%89%B2%E5%8E%9F%E5%A7%8B%E6%8F%90%E4%BA%A4%E5%8E%86%E5%8F%B2%EF%BC%8C%E8%83%BD%E4%B8%BE%E4%B8%AA%E4%BE%8B%E5%AD%90%E5%90%97%EF%BC%9F"><span class="nav-number">4.</span> <span class="nav-text">牺牲原始提交历史，能举个例子吗？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%82%A3%E4%B9%88%E6%88%91%E4%BD%BF%E7%94%A8-rebase-%E5%B0%86-dev-%E7%9A%84%E6%9B%B4%E6%94%B9%E5%BA%94%E7%94%A8%E7%9A%84%E6%88%91%E7%9A%84%E5%88%86%E6%94%AF%EF%BC%8C%E4%B9%8B%E5%90%8E%E5%86%8D%E4%BD%BF%E7%94%A8-merge-%E5%B0%86%E6%88%91%E7%9A%84%E5%88%86%E6%94%AF%E6%9B%B4%E6%94%B9%E5%BA%94%E7%94%A8%E5%88%B0-dev%EF%BC%8C%E4%BC%9A%E5%87%BA%E7%8E%B0%E9%97%AE%E9%A2%98%E5%90%97%EF%BC%9F"><span class="nav-number">5.</span> <span class="nav-text">那么我使用 rebase 将 dev 的更改应用的我的分支，之后再使用 merge 将我的分支更改应用到 dev，会出现问题吗？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8-rebase-%E5%B0%86-dev-%E7%9A%84%E6%9B%B4%E6%94%B9%E5%BA%94%E7%94%A8%E7%9A%84%E6%88%91%E7%9A%84%E5%88%86%E6%94%AF%E6%97%B6%EF%BC%8C%E6%98%AF%E4%B8%8D%E6%98%AF%E4%BF%AE%E6%94%B9%E4%BA%86%E6%8F%90%E4%BA%A4%E7%9A%84-hash-%E5%80%BC%EF%BC%9F"><span class="nav-number">6.</span> <span class="nav-text">使用 rebase 将 dev 的更改应用的我的分支时，是不是修改了提交的 hash 值？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%82%A3%E6%88%91-merge-%E8%BF%9B-dev-%E5%88%86%E6%94%AF%E7%9A%84%E6%97%B6%E5%80%99%EF%BC%8C%E6%98%AF%E4%B8%8D%E6%98%AF%E4%BD%BF%E7%94%A8%E7%9A%84%E8%A2%AB%E4%BF%AE%E6%94%B9%E7%9A%84%E6%8F%90%E4%BA%A4%EF%BC%9F"><span class="nav-number">7.</span> <span class="nav-text">那我 merge 进 dev 分支的时候，是不是使用的被修改的提交？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%86-dev-%E7%9A%84%E6%9B%B4%E6%94%B9-rebase-%E5%88%B0%E6%88%91%E7%9A%84%E5%88%86%E6%94%AF%EF%BC%8C%E6%84%8F%E5%91%B3%E7%9D%80-dev-%E4%B8%8A%E9%A2%86%E5%85%88%E4%BA%8E%E6%88%91%E5%88%86%E6%94%AF%E7%9A%84%E6%8F%90%E4%BA%A4-hash-%E5%80%BC%E4%BC%9A%E8%A2%AB%E4%BF%AE%E6%94%B9%EF%BC%8C%E4%B9%8B%E5%90%8E%E6%88%91%E5%86%8D-merge-%E6%88%91%E7%9A%84%E5%88%86%E6%94%AF%E5%88%B0-dev%EF%BC%8C%E8%BF%99%E4%BA%9B%E8%A2%AB%E9%A2%86%E5%85%88%E4%BA%8E%E6%88%91%E5%88%86%E6%94%AF%E7%9A%84%E6%8F%90%E4%BA%A4%E6%98%AF%E4%B8%8D%E6%98%AF%E5%B0%B1%E4%B8%A2%E5%A4%B1%E4%BA%86%E5%8E%9F%E5%A7%8B%E7%9A%84-hash-%E5%80%BC%EF%BC%8C%E6%88%91%E7%9A%84%E7%90%86%E8%A7%A3%E6%AD%A3%E7%A1%AE%E5%90%97%EF%BC%9F%E8%BF%99%E6%A0%B7%E4%BC%9A%E4%B8%8D%E4%BC%9A%E4%BA%A7%E7%94%9F%E9%97%AE%E9%A2%98%EF%BC%9F"><span class="nav-number">8.</span> <span class="nav-text">将 dev 的更改 rebase 到我的分支，意味着 dev 上领先于我分支的提交 hash 值会被修改，之后我再 merge 我的分支到 dev，这些被领先于我分支的提交是不是就丢失了原始的 hash 值，我的理解正确吗？这样会不会产生问题？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%83%BD%E4%B8%BE%E4%B8%AA%E5%85%B7%E4%BD%93%E7%9A%84%E4%BE%8B%E5%AD%90%E5%90%97%EF%BC%9F%E6%A8%A1%E6%8B%9F%E7%9C%9F%E6%AD%A3%E7%9A%84-hash-%E5%80%BC"><span class="nav-number">9.</span> <span class="nav-text">能举个具体的例子吗？模拟真正的 hash 值</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E2%80%9C%E5%9B%A0%E4%B8%BA-rebase-%E4%BC%9A%E6%94%B9%E5%8F%98%E6%8F%90%E4%BA%A4%E7%9A%84%E5%8E%86%E5%8F%B2%EF%BC%8C%E5%A6%82%E6%9E%9C%E5%85%B6%E4%BB%96%E4%BA%BA%E5%9F%BA%E4%BA%8E%E4%BD%A0%E7%9A%84%E5%88%86%E6%94%AF%E8%BF%9B%E8%A1%8C%E5%BC%80%E5%8F%91%EF%BC%8C%E9%82%A3%E4%B9%88-rebase-%E5%8F%AF%E8%83%BD%E4%BC%9A%E5%AF%BC%E8%87%B4%E4%BB%96%E4%BB%AC%E7%9A%84%E5%B7%A5%E4%BD%9C%E4%B8%A2%E5%A4%B1%E6%88%96%E8%80%85%E4%BA%A7%E7%94%9F%E5%86%B2%E7%AA%81%E3%80%82%E2%80%9D%E8%83%BD%E5%83%8F%E4%B8%8A%E9%9D%A2%E4%B8%80%E6%A0%B7%E4%B8%BE%E4%BE%8B%E8%AF%B4%E6%98%8E%E5%B7%A5%E4%BD%9C%E4%B8%A2%E5%A4%B1%E6%88%96%E4%BA%A7%E7%94%9F%E5%86%B2%E7%AA%81%E7%9A%84%E6%83%85%E5%86%B5%E5%90%97%EF%BC%9F"><span class="nav-number">10.</span> <span class="nav-text">“因为 rebase 会改变提交的历史，如果其他人基于你的分支进行开发，那么 rebase 可能会导致他们的工作丢失或者产生冲突。”能像上面一样举例说明工作丢失或产生冲突的情况吗？</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Jeff Ren"
+      src="/StudentJeffRen.github.io/uploads/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Jeff Ren</p>
+  <div class="site-description" itemprop="description">谦虚谨慎，戒骄戒躁</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/StudentJeffRen.github.io/archives/">
+          <span class="site-state-item-count">39</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/StudentJeffRen.github.io/categories/">
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/StudentJeffRen.github.io/tags/">
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/StudentJeffRen" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;StudentJeffRen" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://jeffren.cn/2023/06/11/%E3%80%90Git%E3%80%91Rebase%E5%92%8CMerge%E7%9A%84%E5%8C%BA%E5%88%AB%E5%8F%8A%E5%85%B6%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/StudentJeffRen.github.io/uploads/avatar.jpg">
+      <meta itemprop="name" content="Jeff Ren">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="杰夫的博客">
+      <meta itemprop="description" content="谦虚谨慎，戒骄戒躁">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Git：Rebase 和 Merge 的区别及其使用场景 | 杰夫的博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Git：Rebase 和 Merge 的区别及其使用场景
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2023-06-11 00:00:00 / 修改时间：18:20:00" itemprop="dateCreated datePublished" datetime="2023-06-11T00:00:00+08:00">2023-06-11</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/StudentJeffRen.github.io/categories/Git/" itemprop="url" rel="index"><span itemprop="name">Git</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/StudentJeffRen.github.io/2023/06/11/%E3%80%90Git%E3%80%91Rebase%E5%92%8CMerge%E7%9A%84%E5%8C%BA%E5%88%AB%E5%8F%8A%E5%85%B6%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2023/06/11/【Git】Rebase和Merge的区别及其使用场景/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>折磨 ChatGPT 系列。本文详细介绍了两种主要的代码整合方式——Rebase 和 Merge，阐明了它们之间的区别以及各自的优势。还将介绍在何时应该使用 Rebase，何时应该使用 Merge，以及如何在使用 Rebase 时避免潜在的问题。本文对于那些希望更深入了解 Git 工作流并提升团队协作效率的开发者非常有帮助。</p>
+<span id="more"></span>
+
+<h2 id="rebase-和-merge-有什么区别，分别什么时候使用？"><a href="#rebase-和-merge-有什么区别，分别什么时候使用？" class="headerlink" title="rebase 和 merge 有什么区别，分别什么时候使用？"></a>rebase 和 merge 有什么区别，分别什么时候使用？</h2><p><code>rebase</code> 和 <code>merge</code> 都是 Git 中用于合并代码的两种策略，但是它们的方式和适用的场景有所不同。</p>
+<p><code>merge</code> 是将一个分支的改动合并到另一个分支。合并过程中如果两个分支有冲突，Git 会创建一个新的合并提交来解决冲突。因此，<code>merge</code> 操作会保留所有提交历史和提交的顺序。这样能保留完整的项目历史和分支信息，但可能会使得历史变得复杂。</p>
+<p><code>rebase</code> 是把一个分支上的改动应用到另一个分支，但它实际上是创建了新的提交。<code>rebase</code>会先找到两个分支的共同祖先，然后将当前分支的每一个提交当做一个新的提交重新应用到目标分支上。这样会产生一条线性的提交历史，看起来更加清晰，但可能会覆盖原有的提交信息。</p>
+<p>在选择使用哪种方式时，可以参考以下情况：</p>
+<ul>
+<li>当你想保留完整的提交历史和分支信息，或者是在公共的分支（例如 <code>dev</code> 或 <code>master</code> 分支）上操作时，建议使用 <code>merge</code>。</li>
+<li>当你想获得一条线性的提交历句，或者是在本地进行操作，想要整理自己的提交时，可以选择使用 <code>rebase</code>。</li>
+</ul>
+<p>请注意，在公共分支上使用 <code>rebase</code> 可能会导致问题，因为 <code>rebase</code> 会改变提交的历史。如果其他人基于这个分支的某个提交进行开发，而这个提交在 <code>rebase</code> 后被改变或者消失，那么会导致他们的工作丢失或者产生冲突。</p>
+<h2 id="将-dev-合并到我自己的开发分支，可以使用-rebase-吗？"><a href="#将-dev-合并到我自己的开发分支，可以使用-rebase-吗？" class="headerlink" title="将 dev 合并到我自己的开发分支，可以使用 rebase 吗？"></a>将 dev 合并到我自己的开发分支，可以使用 rebase 吗？</h2><p>是的，你可以使用 <code>rebase</code> 来将 <code>dev</code> 分支的最新更改应用到你的分支。这样可以使你的分支的提交历史更加线性清晰。在你的分支上运行以下命令可以实现这个操作：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git checkout your-branch</span><br><span class="line">git rebase dev</span><br></pre></td></tr></table></figure>
+
+<p>如果 <code>rebase</code> 过程中出现冲突，Git 会暂停并允许你解决这些冲突。你可以在解决了所有冲突后，使用 <code>git add .</code> 添加所有更改，然后使用 <code>git rebase --continue</code> 继续 <code>rebase</code> 进程。</p>
+<p>请注意，你需要确保你的分支没有被其他人使用或者基于它的提交进行开发。因为 <code>rebase</code> 会改变提交的历史，如果其他人基于你的分支进行开发，那么 <code>rebase</code> 可能会导致他们的工作丢失或者产生冲突。如果你的分支是其他人正在使用的，那么使用 <code>merge</code> 来合并 <code>dev</code> 的更改会更安全。</p>
+<h2 id="把我的开发分支合入-dev，用-merge-更合适对吗？"><a href="#把我的开发分支合入-dev，用-merge-更合适对吗？" class="headerlink" title="把我的开发分支合入 dev，用 merge 更合适对吗？"></a>把我的开发分支合入 dev，用 merge 更合适对吗？</h2><p>是的，当你准备把你的开发分支合入主线（如 <code>dev</code> 或 <code>master</code>）时，使用 <code>merge</code> 通常是更好的选择。</p>
+<p>原因在于，<code>merge</code> 保留了所有的提交历史以及它们的原始上下文，这对于一个多人协作的项目来说是非常有价值的。它使得其他团队成员可以更容易地理解你的改动是在什么上下文以及为何做出。</p>
+<p>另一方面，<code>rebase</code> 则会创建一条干净的、线性的提交历史，这样的提交历史在查看时会更清晰，但这是以牺牲原始提交历史为代价的，因为它实际上是在创建新的提交。</p>
+<p>所以，在你的开发分支准备合并到主线时，通常推荐使用 <code>merge</code>。而 <code>rebase</code> 则更适合在你想整理自己的本地提交，或者将主线的更改应用到你的开发分支时使用。</p>
+<h2 id="牺牲原始提交历史，能举个例子吗？"><a href="#牺牲原始提交历史，能举个例子吗？" class="headerlink" title="牺牲原始提交历史，能举个例子吗？"></a>牺牲原始提交历史，能举个例子吗？</h2><p>当你使用<code>rebase</code>时，Git实际上是在目标分支创建了你的分支上每个提交的副本，这可能会改变提交的历史。每个新创建的提交都会有一个新的哈希值，即使提交的内容没有改变。这是因为Git的哈希值是基于提交内容以及父提交的哈希值计算的，因此，在<code>rebase</code>操作中创建的新提交和原始提交的父提交是不同的，所以哈希值会变。</p>
+<p>举个例子，假设你在你的开发分支上有两个提交 A 和 B，然后你决定使用 <code>rebase</code> 将这两个提交应用到 <code>dev</code> 分支。Git将创建A’和B’，这两个提交在内容上与A和B相同，但是它们有不同的哈希值，因为它们是在 <code>dev</code> 分支的上下文中创建的。</p>
+<p>这意味着如果你在<code>rebase</code>之后查看Git历史，你将看不到原始的A和B提交，只会看到新的A’和B’提交。在大多数情况下，这可能并不重要，但如果你想保留完整的提交历史，或者其他开发者基于你的A和B提交进行了开发，那么这就可能会导致问题。</p>
+<h2 id="那么我使用-rebase-将-dev-的更改应用的我的分支，之后再使用-merge-将我的分支更改应用到-dev，会出现问题吗？"><a href="#那么我使用-rebase-将-dev-的更改应用的我的分支，之后再使用-merge-将我的分支更改应用到-dev，会出现问题吗？" class="headerlink" title="那么我使用 rebase 将 dev 的更改应用的我的分支，之后再使用 merge 将我的分支更改应用到 dev，会出现问题吗？"></a>那么我使用 rebase 将 dev 的更改应用的我的分支，之后再使用 merge 将我的分支更改应用到 dev，会出现问题吗？</h2><p>一般来说，使用 <code>rebase</code> 将 <code>dev</code> 分支的更改应用到你的分支，然后再使用 <code>merge</code> 将你的分支合并到 <code>dev</code> 是一种常见且被广泛接受的做法。这种做法结合了 <code>rebase</code> 和 <code>merge</code> 的优点：利用 <code>rebase</code> 来获得一个干净、线性的提交历史，并且利用 <code>merge</code> 来保留详尽的历史记录和上下文信息。</p>
+<p>这种策略的好处是，<code>rebase</code> 会首先将你的分支更新到 <code>dev</code> 的最新版本，然后在这个基础上添加你的更改。这样做有助于避免合并冲突，因为你是在最新的 <code>dev</code> 代码基础上进行开发。然后，通过 <code>merge</code> 把你的分支合并到 <code>dev</code>，会创建一个新的合并提交，这个合并提交能清楚地显示哪些更改是从你的分支引入的。</p>
+<p>所以，这种方式不会导致问题，只要在 <code>rebase</code> 时处理好可能出现的冲突，并且确保你的分支在 <code>rebase</code> 之后没有被其他人使用。</p>
+<h2 id="使用-rebase-将-dev-的更改应用的我的分支时，是不是修改了提交的-hash-值？"><a href="#使用-rebase-将-dev-的更改应用的我的分支时，是不是修改了提交的-hash-值？" class="headerlink" title="使用 rebase 将 dev 的更改应用的我的分支时，是不是修改了提交的 hash 值？"></a>使用 rebase 将 dev 的更改应用的我的分支时，是不是修改了提交的 hash 值？</h2><p>是的，当你使用 <code>rebase</code> 将 <code>dev</code> 分支的更改应用到你的分支时，你的分支上的每个提交都会创建一个新的副本，并且每个副本都会有一个新的哈希值。</p>
+<p>原因在于，Git 中的每个提交的哈希值是基于提交内容以及父提交的哈希值计算的。在 <code>rebase</code> 过程中，你的分支的提交被重新应用到 <code>dev</code> 分支的最新提交上，这意味着它们的父提交已经改变，因此需要创建一个新的提交，这个新的提交会有一个新的哈希值。</p>
+<p>这就是为什么我们说 <code>rebase</code> 会改变提交历史的原因。如果其他开发者已经基于你的分支的某个提交（使用旧的哈希值）进行开发，那么 <code>rebase</code> 可能会导致他们的工作丢失或者产生冲突。所以，在执行 <code>rebase</code> 操作前，需要确保没有其他开发者正在基于你的分支进行开发。</p>
+<h2 id="那我-merge-进-dev-分支的时候，是不是使用的被修改的提交？"><a href="#那我-merge-进-dev-分支的时候，是不是使用的被修改的提交？" class="headerlink" title="那我 merge 进 dev 分支的时候，是不是使用的被修改的提交？"></a>那我 merge 进 dev 分支的时候，是不是使用的被修改的提交？</h2><p>是的，当你使用 <code>rebase</code> 将 <code>dev</code> 分支的更改应用到你的分支后，你的分支上的每个提交都会生成新的副本，并且每个副本都会有一个新的哈希值。因此，当你将你的分支合并（<code>merge</code>）到 <code>dev</code> 分支时，实际上使用的是这些新生成的、具有新哈希值的提交。</p>
+<p><code>rebase</code> 后的新提交在内容上与原始提交相同（除非在 <code>rebase</code> 过程中解决冲突时进行了修改），但是由于父提交的变化，这些新提交有了新的哈希值。这就是为什么我们说 <code>rebase</code> 可以创建一条干净、线性的提交历史的原因。当你把这些新提交通过 <code>merge</code> 操作合并到 <code>dev</code> 分支时，<code>merge</code> 会创建一个新的合并提交，清晰地记录了哪些更改是从你的分支引入的。</p>
+<h2 id="将-dev-的更改-rebase-到我的分支，意味着-dev-上领先于我分支的提交-hash-值会被修改，之后我再-merge-我的分支到-dev，这些被领先于我分支的提交是不是就丢失了原始的-hash-值，我的理解正确吗？这样会不会产生问题？"><a href="#将-dev-的更改-rebase-到我的分支，意味着-dev-上领先于我分支的提交-hash-值会被修改，之后我再-merge-我的分支到-dev，这些被领先于我分支的提交是不是就丢失了原始的-hash-值，我的理解正确吗？这样会不会产生问题？" class="headerlink" title="将 dev 的更改 rebase 到我的分支，意味着 dev 上领先于我分支的提交 hash 值会被修改，之后我再 merge 我的分支到 dev，这些被领先于我分支的提交是不是就丢失了原始的 hash 值，我的理解正确吗？这样会不会产生问题？"></a>将 dev 的更改 rebase 到我的分支，意味着 dev 上领先于我分支的提交 hash 值会被修改，之后我再 merge 我的分支到 dev，这些被领先于我分支的提交是不是就丢失了原始的 hash 值，我的理解正确吗？这样会不会产生问题？</h2><p>你的理解有一点偏差。当你使用 <code>rebase</code> 将 <code>dev</code> 分支的更改应用到你的分支时，实际上只有你的分支上的提交会被修改并生成新的哈希值。<code>dev</code> 分支上领先于你的分支的提交并不会被修改，它们的哈希值会保持不变。</p>
+<p>具体来说，<code>rebase</code> 的过程是这样的：Git 会找到你的分支与 <code>dev</code> 分支的共同祖先，然后将从这个共同祖先到你的分支上的所有提交（我们称之为 “补丁”）取下来，然后将 <code>dev</code> 分支上领先于你的分支的所有提交应用到你的分支上，最后再将之前取下的 “补丁” 应用到你的分支。这个过程中，只有你的分支上的提交会创建新的副本并生成新的哈希值，而 <code>dev</code> 分支上的提交不会被改变。</p>
+<p>因此，当你再将你的分支合并到 <code>dev</code> 分支时，<code>dev</code> 分支上原有的提交（及其哈希值）都会被保留。<code>merge</code> 操作会创建一个新的合并提交，这个合并提交包含了你的分支上的所有更改（在 <code>rebase</code> 时生成的新提交）。所以，这个过程不会丢失 <code>dev</code> 分支上原有提交的哈希值，也不会产生问题。</p>
+<h2 id="能举个具体的例子吗？模拟真正的-hash-值"><a href="#能举个具体的例子吗？模拟真正的-hash-值" class="headerlink" title="能举个具体的例子吗？模拟真正的 hash 值"></a>能举个具体的例子吗？模拟真正的 hash 值</h2><p>当然，让我们使用一些简化的哈希值来模拟这个过程。假设我们有以下的提交历史：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/StudentJeffRen/ImageHostingService/img/202306111805666.png"></p>
+<p>其中，<code>A</code>, <code>B</code>, <code>C</code> 是 <code>dev</code> 分支的提交，<code>D</code>, <code>E</code> 是 <code>feature</code> 分支的提交。假设他们的哈希值分别为 <code>a1</code>, <code>b1</code>, <code>c1</code>, <code>d1</code>, <code>e1</code>。</p>
+<p>当你在 <code>feature</code> 分支上执行 <code>git rebase dev</code> 命令，Git 会找到两个分支的共同祖先（这里是 <code>B</code>），然后将 <code>feature</code> 分支从共同祖先后的所有提交（也就是 <code>D</code> 和 <code>E</code>）取下来，然后在 <code>dev</code> 分支的最新提交上（也就是 <code>C</code>）再应用这些提交。应用后的提交会生成新的哈希值，我们用 <code>d2</code> 和 <code>e2</code> 表示。这时候，你的提交历史看起来像这样：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/StudentJeffRen/ImageHostingService/img/202306111806481.png"></p>
+<p>然后你再将 <code>feature</code> 分支合并到 <code>dev</code> 分支，<code>merge</code> 会创建一个新的合并提交，假设它的哈希值为 <code>f1</code>。合并后的提交历史看起来是这样：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/StudentJeffRen/ImageHostingService/img/202306111806188.png"></p>
+<p>这里 <code>F</code> 是新的合并提交，哈希值为 <code>f1</code>，它包含了 <code>feature</code> 分支上所有的更改。你可以看到，<code>dev</code> 分支原有的提交 <code>A</code>, <code>B</code>, <code>C</code> （及其哈希值）都被保留了，没有发生改变。</p>
+<h2 id="“因为-rebase-会改变提交的历史，如果其他人基于你的分支进行开发，那么-rebase-可能会导致他们的工作丢失或者产生冲突。”能像上面一样举例说明工作丢失或产生冲突的情况吗？"><a href="#“因为-rebase-会改变提交的历史，如果其他人基于你的分支进行开发，那么-rebase-可能会导致他们的工作丢失或者产生冲突。”能像上面一样举例说明工作丢失或产生冲突的情况吗？" class="headerlink" title="“因为 rebase 会改变提交的历史，如果其他人基于你的分支进行开发，那么 rebase 可能会导致他们的工作丢失或者产生冲突。”能像上面一样举例说明工作丢失或产生冲突的情况吗？"></a>“因为 rebase 会改变提交的历史，如果其他人基于你的分支进行开发，那么 rebase 可能会导致他们的工作丢失或者产生冲突。”能像上面一样举例说明工作丢失或产生冲突的情况吗？</h2><p>当然，让我们使用一个例子来解释这个情况。</p>
+<p>假设我们有以下的提交历史：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/StudentJeffRen/ImageHostingService/img/202306111806396.png"></p>
+<p>其中，<code>A</code>, <code>B</code>, <code>C</code> 是 <code>dev</code> 分支的提交，<code>D</code>, <code>E</code> 是 <code>feature</code> 分支的提交，<code>F</code> 是 <code>otherFeature</code> 分支的提交。哈希值分别为 <code>a1</code>, <code>b1</code>, <code>c1</code>, <code>d1</code>, <code>e1</code>, <code>f1</code>。</p>
+<p>现在，你在 <code>feature</code> 分支上执行 <code>git rebase dev</code> 命令，<code>rebase</code> 会将 <code>D</code> 和 <code>E</code> 提交的更改移动到 <code>C</code> 上，并且这两个新的提交会有新的哈希值。我们假设这两个新的提交的哈希值分别为 <code>d2</code> 和 <code>e2</code>。此时，你的提交历史看起来像这样：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/StudentJeffRen/ImageHostingService/img/202306111807524.png"></p>
+<p>在这里，<code>D&#39;</code> 和 <code>E&#39;</code> 是 <code>rebase</code> 之后新生成的提交，哈希值分别为 <code>d2</code> 和 <code>e2</code>。</p>
+<p>然而，<code>otherFeature</code> 分支依然基于旧的 <code>E</code>（<code>e1</code>）提交进行开发，而不是新的 <code>E&#39;</code>（<code>e2</code>）。如果 <code>otherFeature</code> 分支的开发者并不知道 <code>feature</code> 分支的 <code>rebase</code> 操作，他可能继续在 <code>F</code> 提交上进行开发，并尝试将这些更改合并回 <code>feature</code> 分支。这时候，他可能会遇到冲突，因为 <code>feature</code> 分支上的 <code>E&#39;</code> 提交与 <code>otherFeature</code> 分支上的 <code>E</code> 提交具有相同的更改，但是有不同的哈希值。如果他并不清楚这个情况，他可能无法正确解决这些冲突，导致工作丢失。</p>
+<p>因此，在执行 <code>rebase</code> 操作时，需要确保没有其他人正在基于你的分支进行开发，或者如果有，他们应该被通知，知道他们需要将他们的更改重新基于 <code>rebase</code> 后的新提交进行开发。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/StudentJeffRen.github.io/tags/Git/" rel="tag"># Git</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/StudentJeffRen.github.io/2022/08/09/%E3%80%90iOS%20new%E3%80%91%E4%BA%8B%E4%BB%B6%E4%BC%A0%E9%80%92%E5%92%8C%E4%BA%8B%E4%BB%B6%E5%93%8D%E5%BA%94/" rel="prev" title="从 UITableViewCell 上按钮点击无效，理解事件传递和事件响应">
+                  <i class="fa fa-chevron-left"></i> 从 UITableViewCell 上按钮点击无效，理解事件传递和事件响应
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jeff Ren</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/StudentJeffRen.github.io/js/comments.js"></script><script src="/StudentJeffRen.github.io/js/utils.js"></script><script src="/StudentJeffRen.github.io/js/motion.js"></script><script src="/StudentJeffRen.github.io/js/schemes/muse.js"></script><script src="/StudentJeffRen.github.io/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"jeffren","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/StudentJeffRen.github.io/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>
